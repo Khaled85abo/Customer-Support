@@ -23,17 +23,17 @@ router
 router.get("/roles", validToken, isAdmin, getEmployeeRoles);
 
 // Login  client
-router.post("/login", authenticateClient);
+router.post("/auth", authenticateClient);
 
 // Login  admin, agent
-router.post("/login/employee", authenticateEmployee);
+router.post("/auth/employee", authenticateEmployee);
 
 router.post("/activate", validToken, isAgent, activateAccount);
 // Admin removes/get/edit agents
 router
   .route("/:id")
   .get(validToken, isAdmin, getSupportAgentsById)
-  .put(validToken, isAdmin, updateSupportAgent)
+  .patch(validToken, isAdmin, updateSupportAgent)
   .delete(validToken, isAdmin, deleteSupportAgent);
 
 export default router;

@@ -4,6 +4,7 @@ import { ROLES } from "../constants/employee";
 import { ERRORS } from "../constants/errors";
 import Client from "../models/client.model";
 import Employee, { isValid } from "../models/employee.model";
+import Refund from "../models/refund.model";
 import createToken from "../utils/createToken";
 
 // @desc    Authenticate employee => send token back
@@ -94,7 +95,16 @@ const updateSupportAgent = async (req: Request, res: Response) => {
 // @route   delete /api/users/:id
 // @access  private/ admin
 const deleteSupportAgent = async (req: Request, res: Response) => {
+  const agent = await Employee.findById(req.params.id);
+  if (!agent) throw new Error(ERRORS.not_found);
+  if (agent.processing) {
+    await Refund.findByIdAndUpdate(
+      { agent: agent.processing },
+      { agent: null }
+    );
+  }
   await Employee.deleteOne({ _id: req.params.id });
+
   res.json({ message: "support agent deleted" });
 };
 
