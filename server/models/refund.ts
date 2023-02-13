@@ -1,11 +1,6 @@
 import mongoose, { InferSchemaType } from "mongoose";
+import { REFUNDSTATUS } from "../constants/refunds";
 
-export const REFUNDSTATUS = {
-  pending: "pending",
-  processing: "processing",
-  accepted: "accepted",
-  declined: "declined",
-} as const;
 export type RefundStatusTypes = typeof REFUNDSTATUS[keyof typeof REFUNDSTATUS];
 
 const refundSchema = new mongoose.Schema(

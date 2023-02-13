@@ -1,10 +1,6 @@
 import mongoose, { Schema, InferSchemaType, Types } from "mongoose";
 import bcrypt from "bcryptjs";
-
-export const ROLES = {
-  admin: "admin",
-  support_agent: "support-agent",
-} as const;
+import { ROLES } from "../constants/employee";
 
 export type RolesTypes = typeof ROLES[keyof typeof ROLES];
 

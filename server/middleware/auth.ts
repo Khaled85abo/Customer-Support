@@ -1,8 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import * as jwt from "jsonwebtoken";
-import type { JwtPayload } from "jsonwebtoken";
-import { ROLES } from "../models/employee";
-import { CLIENTROLES } from "../models/client";
+import { CLIENTROLES } from "../constants/client";
+import { ROLES } from "../constants/employee";
 import { ERRORS } from "../constants/errors";
 // import { MissingHeader, Unauthorized } from "../errors";
 
