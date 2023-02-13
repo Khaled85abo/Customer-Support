@@ -1,8 +1,8 @@
 import dotenv from "dotenv";
-import Client from "../models/client";
-import Employee from "../models/employee";
-import Order from "../models/Order";
-import Product from "../models/product";
+import Client from "../models/client.model";
+import Employee from "../models/employee.model";
+import Order from "../models/order.model";
+import Product from "../models/product.model";
 import connectDB from "./connection";
 
 import { products } from "./seedData/products";

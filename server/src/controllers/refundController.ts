@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import Refund, { IRefund } from "../models/refund";
-import Employee from "../models/employee";
+import Refund, { IRefund } from "../models/refund.model";
+import Employee from "../models/employee.model";
 import { ERRORS } from "../constants/errors";
 import { REFUNDSTATUS } from "../constants/refunds";
 import { ROLES } from "../constants/employee";

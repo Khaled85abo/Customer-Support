@@ -2,8 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import { CLIENTROLES } from "../constants/client";
 import { ROLES } from "../constants/employee";
 import { ERRORS } from "../constants/errors";
-import Client from "../models/client";
-import Employee from "../models/employee";
+import Client from "../models/client.model";
+import Employee from "../models/employee.model";
 import createToken from "../utils/createToken";
 
 // @desc    Authenticate employee => send token back

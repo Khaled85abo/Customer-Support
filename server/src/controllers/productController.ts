@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { ERRORS } from "../constants/errors";
-import Product from "../models/product";
+import Product from "../models/product.model";
 
 // @desc    Get all products
 // @route   GET /api/products

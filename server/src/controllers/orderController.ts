@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { CLIENTROLES } from "../constants/client";
 import { ERRORS } from "../constants/errors";
-import Order from "../models/order";
+import Order from "../models/order.model";
 import createToken from "../utils/createToken";
 
 // @desc    Get order by ID
