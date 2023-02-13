@@ -109,6 +109,13 @@ const deleteSupportAgent = async (req: Request, res: Response) => {
   res.json({ message: "support agent deleted" });
 };
 
+const activateAccount = async (req: Request, res: Response) => {
+  await Employee.updateOne(
+    { _id: res.locals.user.id },
+    { password: req.body.password, activated: true }
+  );
+};
+
 // @desc    Get all employee roles
 // @route   get /api/users/roles
 // @access  private/ admin
@@ -125,4 +132,5 @@ export {
   updateSupportAgent,
   deleteSupportAgent,
   getEmployeeRoles,
+  activateAccount,
 };
