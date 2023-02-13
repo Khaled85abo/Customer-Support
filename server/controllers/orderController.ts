@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
+import { CLIENTROLES } from "../constants/client";
 import { ERRORS } from "../constants/errors";
-import { CLIENTROLES } from "../models/client";
 import Order from "../models/order";
 import createToken from "../utils/createToken";
 
