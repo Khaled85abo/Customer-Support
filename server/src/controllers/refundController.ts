@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import Refund, { IRefund } from "../models/refund";
-import Employee from "../models/employee";
+import Refund, { IRefund } from "../models/refund.model";
+import Employee from "../models/employee.model";
 import { ERRORS } from "../constants/errors";
 import { REFUNDSTATUS } from "../constants/refunds";
 import { ROLES } from "../constants/employee";
@@ -10,31 +10,33 @@ import { ROLES } from "../constants/employee";
 // @access  private agents
 const getRefunds = async (req: Request, res: Response) => {
   const refunds = await Refund.find({ status: REFUNDSTATUS.pending });
-  res.send(refunds);
+  res.send({ refunds });
 };
 
 // @desc    Get refund by Id
 // @route   GET /api/refunds/:id
 // @access  public
 const getRefundById = async (req: Request, res: Response) => {
-  const issue = await Refund.findById(req.params.id);
-  if (!issue) throw new Error(ERRORS.not_found);
-  res.send(issue);
+  const refund = await Refund.findById(req.params.id);
+  if (!refund) throw new Error(ERRORS.not_found);
+  res.send({ refund });
 };
 
 // @desc    Create a refund
 // @route   POST /api/refunds
 // @access  private client
 const createRefund = async (req: Request, res: Response) => {
-  const { order, user, products } = req.body;
+  const { order, user, orderItems } = req.body;
   // Check if any product exists in already existing refund
   //****** Fix bugg order can exist in multiple refunds *******/
-  const existingRefund = await Refund.findOne({ _id: order });
-  if (existingRefund) {
-    for (let product of products) {
-      for (let refunProduct of existingRefund.products) {
-        if (refunProduct.product == product) {
-          throw new Error(ERRORS.product_already_exist_in_refund);
+  const existingRefundsArray = await Refund.find({ order });
+  if (existingRefundsArray.length > 0) {
+    for (let orderItem of orderItems) {
+      for (let existingRefund of existingRefundsArray) {
+        for (let refundOrderItem of existingRefund.orderItems) {
+          if (refundOrderItem.product == orderItem.product) {
+            throw new Error(ERRORS.product_already_exist_in_refund);
+          }
         }
       }
     }
@@ -42,7 +44,7 @@ const createRefund = async (req: Request, res: Response) => {
   const refund: Partial<IRefund> = {
     order,
     user,
-    products,
+    orderItems,
     status: REFUNDSTATUS.pending,
   };
   // Find a free agent to process the refund
@@ -58,12 +60,14 @@ const createRefund = async (req: Request, res: Response) => {
 
   // Assign the refund case to the agent
   if (createdRefund.agent) {
-    Employee.updateOne(
+    await Employee.updateOne(
       { _id: createdRefund.agent },
-      { processing: createdRefund._id }
+      {
+        processing: createdRefund._id,
+      }
     );
   }
-  res.send(createdRefund);
+  res.send({ message: "Refund created successfully", refund: createdRefund });
 };
 
 // @desc    Get user refunds
@@ -71,7 +75,7 @@ const createRefund = async (req: Request, res: Response) => {
 // @access  private client
 const getUserRefunds = async (req: Request, res: Response) => {
   const refunds = await Refund.find({ user: res.locals.user.id });
-  res.send(refunds);
+  res.send({ refunds });
 };
 
 // @desc    Get order refunds
@@ -79,22 +83,31 @@ const getUserRefunds = async (req: Request, res: Response) => {
 // @access  public
 const getOrderRefunds = async (req: Request, res: Response) => {
   const refunds = await Refund.find({ order: req.params.id });
-  res.send(refunds);
+  res.send({ refunds });
 };
 
 // @desc    Get order refund
 // @route   GET /api/refunds/agent-refund
 // @access  private agent
 const getAgentRefund = async (req: Request, res: Response) => {
+  console.log("agent is from res.locals.user.id: ", res.locals.user.id);
+
   const refunds = await Refund.find({ agent: res.locals.user.id });
-  res.send(refunds);
+  res.send({ refunds });
 };
 
 // @desc    Delete refund
 // @route   DELETE /api/refunds/:id
 // @access  private client
 const removeRefund = async (req: Request, res: Response) => {
-  const cancelledRefund = await Refund.deleteOne({ _id: req.params.id });
+  const refund = await Refund.findOne({ _id: req.params.id });
+  if (!refund) throw new Error(ERRORS.not_found);
+
+  if (refund.status == REFUNDSTATUS.accepted || REFUNDSTATUS.declined)
+    throw new Error(ERRORS.forbidden);
+  if (refund.agent)
+    await Employee.updateOne({ _id: refund.agent }, { processing: null });
+  await Refund.deleteOne({ _id: req.params.id });
   res.send({ message: "Refund deleted" });
 };
 
@@ -102,31 +115,39 @@ const removeRefund = async (req: Request, res: Response) => {
 // @route   PUT /api/refunds/:id
 // @access  private agent
 const resolveRefund = async (req: Request, res: Response) => {
+  // Should agent be able to change the status of a resolved refund
   const { status } = req.body;
+  const refund = await Refund.findOne({ _id: req.params.id });
+  if (!refund) throw new Error(ERRORS.not_found);
 
-  const updatedRefund = await Refund.updateOne(
-    {
-      _id: req.params.id,
-    },
-    { status: status }
-  );
-  res.send({ message: "Refund updated successfuly", updatedRefund });
+  refund.status = status;
+  refund.save();
+
+  res.send({ message: "Refund updated successfuly", refund });
 };
 
 // @desc    Set an agent for refund
-// @route   PUT /api/refunds/set-agent
+// @route   PUT /api/refunds/set-agent/:id
 // @access  private agent
 const setRefundAgent = async (req: Request, res: Response) => {
-  const existingRefund = await Refund.findOne({
+  const isPendingRefund = await Refund.findOne({
     _id: req.params.id,
     status: REFUNDSTATUS.pending,
   });
-  if (!existingRefund) {
+  if (!isPendingRefund) {
     throw new Error(ERRORS.not_found);
   }
-  existingRefund.agent = res.locals.user.id;
-  existingRefund.save();
-  res.send({ message: "Refund is all yours to handle" });
+  isPendingRefund.agent = res.locals.user.id;
+  isPendingRefund.status = REFUNDSTATUS.processing;
+  isPendingRefund.save();
+  await Employee.updateOne(
+    { _id: res.locals.user.id },
+    { processing: isPendingRefund._id }
+  );
+  res.send({
+    message: "Refund is all yours to handle",
+    refund: isPendingRefund,
+  });
 };
 export {
   getRefunds,

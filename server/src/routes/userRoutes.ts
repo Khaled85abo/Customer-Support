@@ -1,15 +1,16 @@
 import express, { Router } from "express";
 import {
+  activateAccount,
   authenticateClient,
   authenticateEmployee,
   createSupportAgent,
   deleteSupportAgent,
   getAllSupportAgents,
-  getAllSupportAgentsById,
+  getSupportAgentsById,
   getEmployeeRoles,
   updateSupportAgent,
 } from "../controllers/userController";
-import { validToken, isAdmin } from "../middleware/auth";
+import { validToken, isAdmin, isAgent } from "../middleware/auth";
 
 const router: Router = express.Router();
 
@@ -19,7 +20,7 @@ router
   .post(validToken, isAdmin, createSupportAgent)
   .get(validToken, isAdmin, getAllSupportAgents);
 
-router.get("/roles", getEmployeeRoles);
+router.get("/roles", validToken, isAdmin, getEmployeeRoles);
 
 // Login  client
 router.post("/login", authenticateClient);
@@ -27,10 +28,11 @@ router.post("/login", authenticateClient);
 // Login  admin, agent
 router.post("/login/employee", authenticateEmployee);
 
+router.post("/activate", validToken, isAgent, activateAccount);
 // Admin removes/get/edit agents
 router
   .route("/:id")
-  .get(validToken, isAdmin, getAllSupportAgentsById)
+  .get(validToken, isAdmin, getSupportAgentsById)
   .put(validToken, isAdmin, updateSupportAgent)
   .delete(validToken, isAdmin, deleteSupportAgent);
 

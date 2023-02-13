@@ -29,3 +29,4 @@ connect().then(() => {
     console.log("server running on port: ", process.env.PORT);
   });
 });
+export default app;

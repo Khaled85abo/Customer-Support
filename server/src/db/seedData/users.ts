@@ -10,8 +10,8 @@ export const employees = [
     activated: true,
   },
   {
-    name: "John",
-    email: "John@se.se",
+    name: "Johan",
+    email: "Johan@se.se",
     password: bcrypt.hashSync("123456", 10),
     role: ROLES.support_agent,
     activated: true,

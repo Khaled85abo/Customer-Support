@@ -3,7 +3,7 @@ const router = express.Router();
 
 router.use((req, res) => {
   res
-    .status(400)
+    .status(404)
     .json({ error: `EndPoint ${req.method} ${req.path} not found` });
 });
 

@@ -21,7 +21,7 @@ router
 router.get("/client-refund", validToken, isClient, getUserRefunds);
 router.get("/order/:id", getOrderRefunds);
 router.get("/agent-refund", validToken, isAgent, getAgentRefund);
-router.get("/set-agent", validToken, isAgent, setRefundAgent);
+router.get("/set-agent/:id", validToken, isAgent, setRefundAgent);
 router
   .route("/:id")
   .get(getRefundById)

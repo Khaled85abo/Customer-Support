@@ -5,7 +5,7 @@ const productSchema = new Schema(
     user: {
       type: Types.ObjectId,
       required: true,
-      ref: "User",
+      ref: "Employee",
     },
     name: {
       type: String,
