@@ -1,7 +1,9 @@
 import { NextFunction, Request, Response } from "express";
+import { CLIENTROLES } from "../constants/client";
+import { ROLES } from "../constants/employee";
 import { ERRORS } from "../constants/errors";
-import Client, { CLIENTROLES } from "../models/client";
-import Employee, { ROLES } from "../models/employee";
+import Client from "../models/client";
+import Employee from "../models/employee";
 import createToken from "../utils/createToken";
 
 // @desc    Authenticate employee => send token back
@@ -11,7 +13,7 @@ const authenticateEmployee = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   const user = await Employee.findOne({ email });
-  if (!user) throw new Error(ERRORS.not_found);
+  if (!user) throw new Error(ERRORS.invalid_cridentials);
 
   const isMatch = await user.validatePassword(password);
   if (!isMatch) throw new Error(ERRORS.invalid_cridentials);
@@ -32,7 +34,7 @@ const authenticateClient = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   const user = await Client.findOne({ email });
-  if (!user) throw new Error(ERRORS.not_found);
+  if (!user) throw new Error(ERRORS.invalid_cridentials);
 
   const isMatch = await user.validatePassword(password);
   if (!isMatch) throw new Error(ERRORS.invalid_cridentials);

@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from "express";
+import express, { Request } from "express";
 require("express-async-errors");
 
 import connect from "./db/connection";

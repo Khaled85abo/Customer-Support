@@ -1,9 +1,6 @@
 import mongoose, { Schema, InferSchemaType, Types } from "mongoose";
 import bcrypt from "bcryptjs";
-
-export const CLIENTROLES = {
-  client: "client",
-} as const;
+import { CLIENTROLES } from "../constants/client";
 
 type ClientROlesTypes = typeof CLIENTROLES[keyof typeof CLIENTROLES];
 

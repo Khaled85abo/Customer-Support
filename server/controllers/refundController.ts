@@ -1,7 +1,9 @@
 import { Request, Response } from "express";
-import Refund, { IRefund, REFUNDSTATUS } from "../models/refund";
-import Employee, { ROLES } from "../models/employee";
+import Refund, { IRefund } from "../models/refund";
+import Employee from "../models/employee";
 import { ERRORS } from "../constants/errors";
+import { REFUNDSTATUS } from "../constants/refunds";
+import { ROLES } from "../constants/employee";
 
 // @desc    Get all refunds
 // @route   GET /api/refunds

@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import { ROLES } from "../../models/employee";
+import { ROLES } from "../../constants/employee";
 
 export const employees = [
   {
