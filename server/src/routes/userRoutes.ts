@@ -6,7 +6,7 @@ import {
   createSupportAgent,
   deleteSupportAgent,
   getAllSupportAgents,
-  getAllSupportAgentsById,
+  getSupportAgentsById,
   getEmployeeRoles,
   updateSupportAgent,
 } from "../controllers/userController";
@@ -32,7 +32,7 @@ router.post("/activate", validToken, isAgent, activateAccount);
 // Admin removes/get/edit agents
 router
   .route("/:id")
-  .get(validToken, isAdmin, getAllSupportAgentsById)
+  .get(validToken, isAdmin, getSupportAgentsById)
   .put(validToken, isAdmin, updateSupportAgent)
   .delete(validToken, isAdmin, deleteSupportAgent);
 

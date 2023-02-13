@@ -28,6 +28,7 @@ export const errorHandler = (
       break;
     case ERRORS.product_already_exist_in_refund:
       res.status(400);
+      break;
     default:
       res.status(500);
   }

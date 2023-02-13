@@ -31,7 +31,7 @@ describe("Mongoose Models Testing", () => {
     email: "test.client@se.se",
     password: "123456",
   };
-  test("clientModel, Create Test", async () => {
+  test("clientModel, Create support agent", async () => {
     const client = await Client.create(newClient);
     expect(client).toBeDefined();
     expect(client.name).toBe(newClient.name);

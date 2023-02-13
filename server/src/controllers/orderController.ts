@@ -13,15 +13,15 @@ const getOrderById = async (req: Request, res: Response) => {
     "name email"
   );
   if (!order) throw new Error(ERRORS.not_found);
-  res.json(order);
+  res.json({ order });
 };
 
 // @desc    Get  user orders
 // @route   GET /api/orders/my-orders
 // @access  Private
 const getMyOrders = async (req: Request, res: Response) => {
-  const orders = await Order.find({ user: res.locals.user.id });
-  res.json(orders);
+  const orders = await Order.find({ email: res.locals.user.email });
+  res.json({ orders });
 };
 
 // @desc    Allow user to start a refund with only order number
@@ -38,7 +38,15 @@ const authenticateByOrder = async (req: Request, res: Response) => {
   if (!order) {
     throw new Error(ERRORS.not_found);
   }
-  res.json({ order, token });
+  res.json({
+    order: {
+      _id: order._id,
+      orderItems: order.orderItems,
+      isPaid: order.isPaid,
+      isDelivered: order.isDelivered,
+    },
+    token,
+  });
 };
 
 export { getOrderById, getMyOrders, authenticateByOrder };

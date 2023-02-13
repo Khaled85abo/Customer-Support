@@ -3,7 +3,7 @@ import { CLIENTROLES } from "../constants/client";
 import { ROLES } from "../constants/employee";
 import { ERRORS } from "../constants/errors";
 import Client from "../models/client.model";
-import Employee from "../models/employee.model";
+import Employee, { isValid } from "../models/employee.model";
 import createToken from "../utils/createToken";
 
 // @desc    Authenticate employee => send token back
@@ -11,8 +11,8 @@ import createToken from "../utils/createToken";
 // @access  public
 const authenticateEmployee = async (req: Request, res: Response) => {
   const { email, password } = req.body;
-
-  const user = await Employee.findOne({ email });
+  const lowerCaseEmail = email.toLowerCase();
+  const user = await Employee.findOne({ email: lowerCaseEmail });
   if (!user) throw new Error(ERRORS.invalid_cridentials);
 
   const isMatch = await user.validatePassword(password);
@@ -55,11 +55,16 @@ const createSupportAgent = async (req: Request, res: Response) => {
   // Add validation to confirm the email belongs to the agent work email not another email
   const { email, name, password } = req.body;
   // const password = Math.random().toString(36).slice(-8);
+  const existingUser = await Employee.findOne({ email });
+  if (existingUser) throw new Error(ERRORS.forbidden);
+
+  const lowerCaseEmail = email.toLowerCase();
   const user = await Employee.create({
-    email,
+    email: lowerCaseEmail,
     name,
     password,
-    role: [ROLES.support_agent],
+    role: ROLES.support_agent,
+    activated: false,
   });
 
   // Send an email to the agent with email and password
@@ -69,22 +74,6 @@ const createSupportAgent = async (req: Request, res: Response) => {
     message: "Support Agent created!",
     user,
   });
-};
-
-// @desc    Get all Support agents
-// @route   get /api/users/
-// @access  private/ admin
-const getAllSupportAgents = async (req: Request, res: Response) => {
-  const users = await Employee.find({ role: ROLES.support_agent });
-  res.json({ users });
-};
-
-// @desc    Get Support agent by Id
-// @route   get /api/users/:id
-// @access  private/ admin
-const getAllSupportAgentsById = async (req: Request, res: Response) => {
-  const user = await Employee.findOne({ _id: req.params.id });
-  res.json({ user });
 };
 
 // @desc    Update a support agent
@@ -98,7 +87,7 @@ const updateSupportAgent = async (req: Request, res: Response) => {
   }
   user.name = name;
   await user.save();
-  res.json({ message: "Agent updated" });
+  res.json({ message: "Agent updated", user });
 };
 
 // @desc    Delete a support agent
@@ -109,11 +98,34 @@ const deleteSupportAgent = async (req: Request, res: Response) => {
   res.json({ message: "support agent deleted" });
 };
 
+// @desc    Get all Support agents
+// @route   get /api/users/
+// @access  private/ admin
+const getAllSupportAgents = async (req: Request, res: Response) => {
+  const users = await Employee.find({ role: ROLES.support_agent });
+  res.json({ users });
+};
+
+// @desc    Get Support agent by Id
+// @route   get /api/users/:id
+// @access  private/ admin
+const getSupportAgentsById = async (req: Request, res: Response) => {
+  const id = req.params.id;
+  if (!isValid(id)) throw new Error(ERRORS.bad_request);
+  const user = await Employee.findOne({ _id: id });
+  if (!user) throw new Error(ERRORS.not_found);
+  res.json({ user });
+};
+
 const activateAccount = async (req: Request, res: Response) => {
-  await Employee.updateOne(
-    { _id: res.locals.user.id },
-    { password: req.body.password, activated: true }
-  );
+  const agent = await Employee.findOne({
+    _id: res.locals.user.id,
+  });
+  if (!agent) throw new Error(ERRORS.not_found);
+  agent.password = req.body.password;
+  agent.activated = true;
+  agent.save();
+  res.send({ user: agent });
 };
 
 // @desc    Get all employee roles
@@ -128,7 +140,7 @@ export {
   authenticateClient,
   createSupportAgent,
   getAllSupportAgents,
-  getAllSupportAgentsById,
+  getSupportAgentsById,
   updateSupportAgent,
   deleteSupportAgent,
   getEmployeeRoles,

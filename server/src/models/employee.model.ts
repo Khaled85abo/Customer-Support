@@ -69,3 +69,4 @@ export interface IEmplyee extends InferSchemaType<typeof employeeSchema> {
 const Employee = mongoose.model<IEmplyee>("Employee", employeeSchema);
 
 export default Employee;
+export const isValid = (id: string) => mongoose.isValidObjectId(id);

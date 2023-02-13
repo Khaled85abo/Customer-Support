@@ -9,14 +9,14 @@ const refundSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       require: false,
       default: null,
-      ref: "User",
+      ref: "Employee",
     },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       required: false,
-      ref: "User",
+      ref: "Client",
     },
-    products: [
+    orderItems: [
       {
         name: { type: String, required: true },
         qty: { type: Number, required: true },

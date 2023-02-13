@@ -1,63 +1,72 @@
 import dotenv from "dotenv";
+dotenv.config();
+import connectDB from "./connection";
+import Order from "../models/order.model";
+import { orders } from "./seedData/orders";
 import Client from "../models/client.model";
 import Employee from "../models/employee.model";
-import Order from "../models/order.model";
 import Product from "../models/product.model";
-import connectDB from "./connection";
 
 import { products } from "./seedData/products";
 import { clients, employees } from "./seedData/users";
 
-dotenv.config();
-connectDB().then(async () => {
-  try {
-    await Order.deleteMany();
-    await Product.deleteMany();
-    await Employee.deleteMany();
-    await Client.deleteMany();
+// connectDB().then(async () => {
+//   try {
+// await Order.deleteMany();
+// await Product.deleteMany();
+// await Employee.deleteMany();
+// await Client.deleteMany();
 
-    const createdClients = await Client.insertMany(clients);
-    const createdEmployees = await Employee.insertMany(employees);
-    // console.log("created employees: ", createdEmployees);
+// const createdClients = await Client.insertMany(clients);
+// const createdEmployees = await Employee.insertMany(employees);
+// console.log("created employees: ", createdEmployees);
 
-    // Employee.insertMany(employees)
-    //   .then((docs) => console.log("created docs", docs))
-    //   .catch((err) => console.log("error creating employees: ", err));
+// Employee.insertMany(employees)
+//   .then((docs) => console.log("created docs", docs))
+//   .catch((err) => console.log("error creating employees: ", err));
 
-    const adminUser = createdEmployees[0]._id;
-    const sampleProducts = products.map((product) => {
-      return { ...product, user: adminUser };
-    });
+// const adminUser = createdEmployees[0]._id;
+// const sampleProducts = products.map((product) => {
+//   return { ...product, user: adminUser };
+// });
 
-    await Product.insertMany(sampleProducts);
+// await Product.insertMany(sampleProducts);
 
-    process.exit();
-  } catch (error) {
-    process.exit(1);
-  }
-});
+//     process.exit();
+//   } catch (error) {
+//     process.exit(1);
+//   }
+// });
 
-export const importData = async () => {
-  try {
-    await Order.deleteMany();
-    await Product.deleteMany();
-    await Employee.deleteMany();
-    await Client.deleteMany();
+// connectDB().then(async () => {
+//   try {
+//     await Order.deleteMany();
+//     // const clients = await Client.find({});
 
-    const createdUsers = await Client.insertMany(clients);
+//     // if (clients.length > 0) {
+//     //   const newOrders = orders.map((order, index) => {
+//     //     switch (index) {
+//     //       case 0:
+//     //         return { ...order, user: clients[0]._id };
+//     //       case 1:
+//     //         return { ...order, user: clients[1]._id };
+//     //       default:
+//     //         return { ...order, user: undefined };
+//     //     }
+//     //   });
+//     //   await Order.insertMany({ newOrders });
+//     // }
 
-    const adminUser = createdUsers[0]._id;
+//     for (let order of orders) {
+//       try {
+//         await Order.create(order);
+//       } catch (error) {
+//         console.log(error);
+//       }
+//     }
+//   } catch (error) {
+//     console.log("error seeding orders: ", error);
+//   }
+// });
 
-    const sampleProducts = products.map((product) => {
-      return { ...product, user: adminUser };
-    });
-
-    await Product.insertMany(sampleProducts);
-
-    process.exit();
-  } catch (error) {
-    process.exit(1);
-  }
-};
-
-// npx ts-node db/seeder.ts
+// npx ts-node src/db/seeder.ts
