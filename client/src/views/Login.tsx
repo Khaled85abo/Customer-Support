@@ -1,140 +1,75 @@
 import * as React from "react";
-import { useReducer, useState } from "react";
+import { useState, useEffect } from "react";
+import Copyright from "../components/Copyright";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
+import Alert from "@mui/material/Alert";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-
-import * as axios from "../axios";
-
-const initialState: LoginState = {
-  email: "",
-  password: "",
-  isLoading: false,
-  error: "",
-  isLoggedIn: false,
-  variant: "login",
-};
-
-interface LoginState {
-  email: string;
-  password: string;
-  isLoading: boolean;
-  error: string;
-  isLoggedIn: boolean;
-  variant: "login" | "forgetPassword";
-}
-
-type LoginAction =
-  | { type: "login" | "success" | "error" | "logOut" }
-  | { type: "field"; fieldName: string; payload: string };
-
-function loginReducer(state: LoginState, action: LoginAction) {
-  switch (action.type) {
-    case "field": {
-      return {
-        ...state,
-        [action.fieldName]: action.payload,
-      };
-    }
-    case "login": {
-      return {
-        ...state,
-        error: "",
-        isLoading: true,
-      };
-    }
-    case "success": {
-      return {
-        ...state,
-        isLoggedIn: true,
-        isLoading: false,
-      };
-    }
-    case "error": {
-      return {
-        ...state,
-        error: "Incorrect username or password!",
-        isLoggedIn: false,
-        isLoading: false,
-        username: "",
-        password: "",
-      };
-    }
-    case "logOut": {
-      return {
-        ...state,
-        isLoggedIn: false,
-      };
-    }
-    default:
-      return state;
-  }
-}
-
-function Copyright(props: any) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}>
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
+import { useStateContext } from "../context/stateContext";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const theme = createTheme();
 
+const ToggleAuth = ({
+  isClient,
+  setIsClient,
+}: {
+  isClient: boolean;
+  setIsClient: (bol: boolean) => void;
+}) => {
+  return (
+    <Grid container spacing={3} marginTop={3}>
+      <Grid item xs={6}>
+        <Button
+          fullWidth
+          variant={isClient ? "contained" : "outlined"}
+          onClick={() => setIsClient(true)}>
+          Customer
+        </Button>
+      </Grid>
+      <Grid item xs={6}>
+        <Button
+          fullWidth
+          variant={isClient ? "outlined" : "contained"}
+          onClick={() => setIsClient(false)}>
+          Admin
+        </Button>
+      </Grid>
+    </Grid>
+  );
+};
+
 export default function SignIn() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isClient, setIsClient] = useState(true);
-  const [state, dispatch] = useReducer(loginReducer, initialState);
-  const { email, password, isLoading, error, isLoggedIn } = state;
-
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    dispatch({ type: "login" });
-
-    try {
-      if (isClient) {
-        await axios.loginClient({ email, password });
-      } else {
-        await axios.loginEmployee({ email, password });
-      }
-      dispatch({ type: "success" });
-    } catch (error) {
-      dispatch({ type: "error" });
-    }
-  };
+  const {
+    loginState: { isLoading, error, role },
+    onSubmit,
+    getRoles,
+  } = useStateContext();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    try {
-      const roles = await axios.getRoles();
-
-      console.log("recied roles for amdin: ", roles.data.ROLES);
-    } catch (error) {}
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+    // getRoles();
+    if (data.get("email") && data.get("password")) {
+      onSubmit(isClient, data.get("email"), data.get("password"));
+    }
   };
+
+  useEffect(() => {
+    if (role) {
+      navigate("/" + role);
+    }
+  }, [role, location.pathname]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -153,6 +88,15 @@ export default function SignIn() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
+
+          <ToggleAuth isClient={isClient} setIsClient={setIsClient} />
+
+          <Grid
+            container
+            marginTop={3}
+            sx={{ display: "grid", placeItems: "center" }}>
+            {error && <Alert severity="error">{error}</Alert>}
+          </Grid>
           <Box
             component="form"
             onSubmit={handleSubmit}
@@ -180,27 +124,13 @@ export default function SignIn() {
             />
 
             <Button
+              disabled={isLoading}
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}>
               Sign In
             </Button>
-            <Grid container>
-              <Grid item>
-                <Link variant="body2">
-                  {isClient ? (
-                    <span onClick={() => setIsClient(false)}>
-                      Login as employee
-                    </span>
-                  ) : (
-                    <span onClick={() => setIsClient(true)}>
-                      Login as customer
-                    </span>
-                  )}
-                </Link>
-              </Grid>
-            </Grid>
           </Box>
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />

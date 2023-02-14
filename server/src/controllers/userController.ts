@@ -6,9 +6,9 @@ import Client from "../models/client.model";
 import Employee, { isValid } from "../models/employee.model";
 import Refund from "../models/refund.model";
 import createToken from "../utils/createToken";
-
+import { IEmplyee } from "../models/employee.model";
 // @desc    Authenticate employee => send token back
-// @route   Post /api/users/login/employee
+// @route   Post /api/users/auth/employee
 // @access  public
 const authenticateEmployee = async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -25,13 +25,17 @@ const authenticateEmployee = async (req: Request, res: Response) => {
     role: user.role,
     id: user._id,
   });
-  res.json({ token });
+  res.json({ token, role: user.role, activated: user.activated });
 };
 
 // @desc    Authenticate a client => send token back
-// @route   Post /api/users/login
+// @route   Post /api/auth/login
 // @access  public
-const authenticateClient = async (req: Request, res: Response) => {
+const authenticateClient = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { email, password } = req.body;
 
   const user = await Client.findOne({ email });
@@ -46,7 +50,7 @@ const authenticateClient = async (req: Request, res: Response) => {
     role: CLIENTROLES.client,
     id: user._id,
   });
-  res.json({ token });
+  res.json({ token, role: CLIENTROLES.client, activated: true });
 };
 
 // @desc    Create a support agent
@@ -54,10 +58,12 @@ const authenticateClient = async (req: Request, res: Response) => {
 // @access  private/ admin
 const createSupportAgent = async (req: Request, res: Response) => {
   // Add validation to confirm the email belongs to the agent work email not another email
+  // Add validation to check that all properties have values
+  // Add validation to check password is strong
   const { email, name, password } = req.body;
   // const password = Math.random().toString(36).slice(-8);
   const existingUser = await Employee.findOne({ email });
-  if (existingUser) throw new Error(ERRORS.forbidden);
+  if (existingUser) throw new Error(ERRORS.user_already_exists);
 
   const lowerCaseEmail = email.toLowerCase();
   const user = await Employee.create({
@@ -78,7 +84,7 @@ const createSupportAgent = async (req: Request, res: Response) => {
 };
 
 // @desc    Update a support agent
-// @route   put /api/users/:id
+// @route   patch /api/users/:id
 // @access  private/ admin
 const updateSupportAgent = async (req: Request, res: Response) => {
   const { name } = req.body;
@@ -112,8 +118,15 @@ const deleteSupportAgent = async (req: Request, res: Response) => {
 // @route   get /api/users/
 // @access  private/ admin
 const getAllSupportAgents = async (req: Request, res: Response) => {
-  const users = await Employee.find({ role: ROLES.support_agent });
-  res.json({ users });
+  const users = await Employee.find({ role: ROLES.support_agent }).select([
+    "_id",
+    "name",
+    "email",
+    "processing",
+    "role",
+    "activated",
+  ]);
+  res.send({ users });
 };
 
 // @desc    Get Support agent by Id
