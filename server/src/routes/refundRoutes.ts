@@ -26,6 +26,6 @@ router
   .route("/:id")
   .get(getRefundById)
   .delete(validToken, isClient, removeRefund)
-  .put(validToken, isAgent, resolveRefund);
+  .patch(validToken, isAgent, resolveRefund);
 
 export default router;

@@ -130,6 +130,8 @@ const resolveRefund = async (req: Request, res: Response) => {
 // @route   PUT /api/refunds/set-agent/:id
 // @access  private agent
 const setRefundAgent = async (req: Request, res: Response) => {
+  const agentId = res.locals.user.id;
+
   const isPendingRefund = await Refund.findOne({
     _id: req.params.id,
     status: REFUNDSTATUS.pending,
@@ -137,11 +139,16 @@ const setRefundAgent = async (req: Request, res: Response) => {
   if (!isPendingRefund) {
     throw new Error(ERRORS.not_found);
   }
-  isPendingRefund.agent = res.locals.user.id;
+  const agent = await Employee.findById(agentId);
+  if (!agent) throw new Error();
+  if (agent.processing) throw new Error(ERRORS.forbidden);
+
+  isPendingRefund.agent = agentId;
   isPendingRefund.status = REFUNDSTATUS.processing;
   isPendingRefund.save();
+
   await Employee.updateOne(
-    { _id: res.locals.user.id },
+    { _id: agentId },
     { processing: isPendingRefund._id }
   );
   res.send({

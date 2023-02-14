@@ -17,6 +17,9 @@ export const errorHandler = (
     case ERRORS.forbidden:
       res.status(403);
       break;
+    case ERRORS.user_already_exists:
+      res.status(403);
+      break;
     case ERRORS.expired_token:
       res.status(401);
       break;
