@@ -1,5 +1,6 @@
 import axios from "axios";
 import { AgentDto, CredentialsType } from "../types";
+import { RefundDtoType } from "../types/refund";
 
 axios.defaults.baseURL = "http://localhost:3030/api";
 
@@ -60,9 +61,12 @@ export const getRefunds = () => axios.get("/refunds");
 
 export const getRefundById = (refundId: string) =>
   axios.get(`/refunds/${refundId}`);
-// export const createRefund = (refundData) => axios.post("/refunds", refundData);
 
-export const removeRefund = (refundId: string) => axios.delete("/refunds");
+export const createRefund = (refundData: RefundDtoType) =>
+  axios.post("/refunds", refundData);
+
+export const removeRefund = (refundId: string) =>
+  axios.delete(`/refunds/${refundId}`);
 
 export const setAgent = (refundId: string) =>
   axios.get(`/refunds/set-agent/${refundId}`);

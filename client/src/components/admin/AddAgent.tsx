@@ -2,25 +2,21 @@ import { Button, Grid, Box, TextField, Typography, Alert } from "@mui/material";
 import { useAdminContext } from "../../context/adminContext";
 import * as axios from "../../axios";
 import { useState } from "react";
-import {
-  AgentDto,
-  newAgent,
-  RESMSGVAIRANTS,
-  ResMsgVariantsType,
-} from "../../types";
+import { newAgentType, ResMsgVariantsType } from "../../types";
+import { RESMSGVAIRANTS } from "../../constants/responseVariants";
 const AddAgent = () => {
   const { getSupportAgents } = useAdminContext();
   const [resMsg, setResMsg] = useState<{
     type: ResMsgVariantsType;
     message: string;
   } | null>(null);
-  const [newAgent, setNewAgent] = useState<newAgent>({
+  const [newAgent, setNewAgent] = useState<newAgentType>({
     name: "",
     email: "",
     password: "",
   });
 
-  const updateFileds = (fields: Partial<newAgent>) => {
+  const updateFileds = (fields: Partial<newAgentType>) => {
     setNewAgent((prev) => {
       return { ...prev, ...fields };
     });

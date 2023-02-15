@@ -1,3 +1,5 @@
+import { RESMSGVAIRANTS } from "../constants/responseVariants";
+
 export type AgentType = {
   _id: string;
   name: string;
@@ -7,7 +9,7 @@ export type AgentType = {
   activated: boolean;
 };
 
-export type newAgent = {
+export type newAgentType = {
   name: string;
   email: string;
   password: string;
@@ -19,11 +21,5 @@ export type CredentialsType = {
 };
 export type AgentDto = Partial<AgentType>;
 
-export const RESMSGVAIRANTS = {
-  error: "error",
-  success: "success",
-  info: "info",
-  warning: "warning",
-} as const;
 export type ResMsgVariantsType =
   typeof RESMSGVAIRANTS[keyof typeof RESMSGVAIRANTS];

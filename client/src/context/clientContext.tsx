@@ -6,7 +6,7 @@ import {
   ReactNode,
 } from "react";
 import * as axios from "../axios";
-import { RefundStatusType, RefundType } from "../types/refund";
+import { RefundDtoType, RefundStatusType, RefundType } from "../types/refund";
 type OrdersState = {
   loading: boolean;
   orders: [];
@@ -15,7 +15,7 @@ type OrdersState = {
 
 type RefundOrder = {
   status: RefundStatusType;
-  pIds: string[];
+  refundItems: { _id: string; status: RefundStatusType }[];
 };
 
 type RefundsState = {
@@ -28,8 +28,8 @@ type RefundsState = {
 type ClientContextType = {
   orders: OrdersState;
   refunds: RefundsState;
-  getClientORders: () => void;
-  getClientRefunds: () => void;
+  getORders: () => void;
+  getRefunds: () => void;
   number: number;
 };
 
@@ -70,10 +70,13 @@ export default function ClientContextProvider({
     const refundOrders = refunds.reduce(
       (prev: { [key: string]: RefundOrder }, curr: RefundType) => {
         if (!prev[curr.order]) {
-          prev[curr.order] = { status: curr.status, pIds: [] };
+          prev[curr.order] = { status: curr.status, refundItems: [] };
         }
         for (let orderItem of curr.orderItems) {
-          prev[curr.order].pIds.push(orderItem._id);
+          prev[curr.order].refundItems.push({
+            _id: orderItem._id,
+            status: curr.status,
+          });
         }
         return prev;
       },
@@ -83,7 +86,7 @@ export default function ClientContextProvider({
     return refundOrders;
   };
 
-  const getClientORders = async () => {
+  const getORders = async () => {
     setOrders((prev) => ({ ...prev, loading: true }));
     try {
       const res = await axios.getMyOrders();
@@ -94,7 +97,7 @@ export default function ClientContextProvider({
       setOrders((prev) => ({ ...prev, loading: false }));
     }
   };
-  const getClientRefunds = async () => {
+  const getRefunds = async () => {
     setRefunds((prev) => ({ ...prev, loading: true }));
     try {
       const res = await axios.getClinetRefunds();
@@ -112,15 +115,15 @@ export default function ClientContextProvider({
   };
 
   useEffect(() => {
-    getClientORders();
-    getClientRefunds();
+    getORders();
+    getRefunds();
   }, []);
 
   const values = {
     orders,
     refunds,
-    getClientORders,
-    getClientRefunds,
+    getORders,
+    getRefunds,
     number,
   };
   return (

@@ -18,7 +18,6 @@ export const validToken: (
     const user = jwt.verify(token, process.env.JWT_SECRET);
 
     res.locals.user = user;
-
     next();
   } catch (error: any) {
     console.log("error catched from json: ", error.message);

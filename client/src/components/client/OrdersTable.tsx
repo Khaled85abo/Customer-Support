@@ -1,14 +1,31 @@
 import { useClientContext } from "../../context/clientContext";
 import { OrderItemType, OrderType } from "../../types/order";
 import { Typography, Alert, Box, Grid, Button, Stack } from "@mui/material";
+import { useState } from "react";
+import RefundsCheckBoxList from "./RefundsCheckList";
+import BasicModal from "../Modal";
+import OrderItemsTable from "./OrderItemsTable";
 
 const OrdersTable = () => {
   const {
     orders: { orders, error, loading },
+    refunds: { refundOrders },
   } = useClientContext();
 
+  const [orderToRefund, setOrderToRefund] = useState<OrderType | null>(null);
+
+  const setRefundOrder = (order: OrderType) => {
+    setOrderToRefund(order);
+  };
+  const resetRefundOrder = () => {
+    setOrderToRefund(null);
+  };
   if (loading) {
-    return <h5>LOADING...</h5>;
+    return (
+      <Typography variant="h4" color="text.primary" align="center">
+        LOADING...
+      </Typography>
+    );
   }
 
   if (error) {
@@ -20,58 +37,43 @@ const OrdersTable = () => {
   }
 
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>Order info</th>
-          <th>Order items info</th>
-        </tr>
-      </thead>
-      <tbody>
-        {orders.length > 0 &&
-          orders.map((order: OrderType) => (
-            <tr key={order._id}>
-              <td>
-                <h4>{order.isPaid ? "Paid" : "Not paid yet "}</h4>
-                <h4>
-                  {order.isDelivered ? "Delivered" : "Not devliered yet "}
-                </h4>
-              </td>
-              <td>
-                <div>
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Img</th>
-                        <th>name</th>
-                        <th>quantity</th>
-                        <th>price</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {order.orderItems.map((orderItem: OrderItemType) => (
-                        <tr key={orderItem._id}>
-                          <td>
-                            <img
-                              height="60"
-                              src={`http://localhost:3030/${orderItem.image}?w=164&h=164&fit=crop&auto=format`}
-                              alt={orderItem.name}
-                              loading="lazy"
-                            />
-                          </td>
-                          <td>{orderItem.name}</td>
-                          <td>{orderItem.qty}</td>
-                          <td>{orderItem.price}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </td>
-            </tr>
-          ))}
-      </tbody>
-    </table>
+    <>
+      <table>
+        <thead>
+          <tr>
+            <th>Order info</th>
+            <th>Order items info</th>
+          </tr>
+        </thead>
+        <tbody>
+          {orders.length > 0 &&
+            orders.map((order: OrderType) => (
+              <tr key={order._id}>
+                <td>
+                  <Typography variant="h5">
+                    {order.isPaid ? "Paid" : "Not paid yet "}
+                  </Typography>
+                  <Typography variant="h5">
+                    {order.isDelivered ? "Delivered" : "Not devliered yet "}
+                  </Typography>
+
+                  <Button size="small" onClick={() => setRefundOrder(order)}>
+                    Refund order
+                  </Button>
+                </td>
+                <td>
+                  <OrderItemsTable orderItems={order.orderItems} />
+                </td>
+              </tr>
+            ))}
+        </tbody>
+      </table>
+      {orderToRefund && (
+        <BasicModal close={resetRefundOrder}>
+          <RefundsCheckBoxList order={orderToRefund} close={resetRefundOrder} />
+        </BasicModal>
+      )}
+    </>
   );
 };
 

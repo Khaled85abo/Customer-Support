@@ -26,7 +26,7 @@ const getRefundById = async (req: Request, res: Response) => {
 // @route   POST /api/refunds
 // @access  private client
 const createRefund = async (req: Request, res: Response) => {
-  const { order, user, orderItems } = req.body;
+  const { order, orderItems } = req.body;
   // Check if any product exists in already existing refund
   //****** Fix bugg order can exist in multiple refunds *******/
   const existingRefundsArray = await Refund.find({ order });
@@ -43,7 +43,7 @@ const createRefund = async (req: Request, res: Response) => {
   }
   const refund: Partial<IRefund> = {
     order,
-    user,
+    user: res.locals.user.id,
     orderItems,
     status: REFUNDSTATUS.pending,
   };
@@ -103,7 +103,10 @@ const removeRefund = async (req: Request, res: Response) => {
   const refund = await Refund.findOne({ _id: req.params.id });
   if (!refund) throw new Error(ERRORS.not_found);
 
-  if (refund.status == REFUNDSTATUS.accepted || REFUNDSTATUS.declined)
+  if (
+    refund.status == REFUNDSTATUS.accepted ||
+    refund.status == REFUNDSTATUS.declined
+  )
     throw new Error(ERRORS.forbidden);
   if (refund.agent)
     await Employee.updateOne({ _id: refund.agent }, { processing: null });
@@ -115,7 +118,6 @@ const removeRefund = async (req: Request, res: Response) => {
 // @route   PUT /api/refunds/:id
 // @access  private agent
 const resolveRefund = async (req: Request, res: Response) => {
-  // Should agent be able to change the status of a resolved refund
   const { status } = req.body;
   const refund = await Refund.findOne({ _id: req.params.id });
   if (!refund) throw new Error(ERRORS.not_found);
