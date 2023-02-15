@@ -1,5 +1,4 @@
 import Typography from "@mui/material/Typography";
-import Link from "@mui/material/Link";
 
 export default function Copyright(props: any) {
   return (
@@ -9,9 +8,7 @@ export default function Copyright(props: any) {
       align="center"
       {...props}>
       {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Refund Center
-      </Link>{" "}
+      Refund Center
       {new Date().getFullYear()}
       {"."}
     </Typography>

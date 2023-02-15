@@ -49,7 +49,7 @@ export const deleteAgent = (agentId: string) =>
 export const getOrderById = (orderId: string) =>
   axios.get(`/orders/${orderId}`);
 
-export const getMyOrders = () => axios.get("/orders/m-orders");
+export const getMyOrders = () => axios.get("/orders/my-orders");
 
 /**
  *
@@ -80,5 +80,7 @@ export const getOrdersRefunds = (orderId: string) =>
  * PRODUCTS REQUESTS
  *
  */
-// export const getSingleProduct = async (productId) =>
-//   await axios.get(`/products/${productId}`);
+export const getSingleProduct = async (productId: string) =>
+  await axios.get(`/products/${productId}`);
+
+export const getAllProducts = () => axios.get("/products");

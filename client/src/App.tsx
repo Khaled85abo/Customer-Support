@@ -8,7 +8,7 @@ import { useStateContext } from "./context/stateContext";
 import { saveToken } from "./axios";
 import ResponsiveAppBar from "./components/AppBar";
 import AdminContextProvider from "./context/adminContext";
-
+import ClientContextProvider from "./context/clientContext";
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const location = useLocation();
   const {
@@ -33,14 +33,6 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route
-          path="/client"
-          element={
-            <ProtectedRoute>
-              <ClientDashboard />
-            </ProtectedRoute>
-          }
-        />
 
         <Route
           path="/support-agent"
@@ -50,19 +42,27 @@ function App() {
             </ProtectedRoute>
           }
         />
-      </Routes>
-      <AdminContextProvider>
-        <Routes>
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute>
+        <Route
+          path="/client"
+          element={
+            <ProtectedRoute>
+              <ClientContextProvider>
+                <ClientDashboard />
+              </ClientContextProvider>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminContextProvider>
                 <AdminDashboard />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </AdminContextProvider>
+              </AdminContextProvider>
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
     </div>
   );
 }

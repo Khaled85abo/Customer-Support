@@ -50,19 +50,20 @@ export default function SignIn() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isClient, setIsClient] = useState(true);
+  const [credentials, setCredentials] = useState({ email: "", password: "" });
   const {
     loginState: { isLoading, error, role },
-    onSubmit,
-    getRoles,
+
+    login,
   } = useStateContext();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    // getRoles();
-    if (data.get("email") && data.get("password")) {
-      onSubmit(isClient, data.get("email"), data.get("password"));
-    }
+
+    login(isClient, credentials.email, credentials.password);
+    // if (data.get("email") && data.get("password")) {
+    //   onSubmit(isClient, data.get("email"), data.get("password"));
+    // }
   };
 
   useEffect(() => {
@@ -106,10 +107,15 @@ export default function SignIn() {
               margin="normal"
               required
               fullWidth
+              type="email"
               id="email"
               label="Email Address"
               name="email"
               autoComplete="email"
+              value={credentials.email}
+              onChange={(e) =>
+                setCredentials((prev) => ({ ...prev, email: e.target.value }))
+              }
               autoFocus
             />
             <TextField
@@ -120,6 +126,13 @@ export default function SignIn() {
               label="Password"
               type="password"
               id="password"
+              value={credentials.password}
+              onChange={(e) =>
+                setCredentials((prev) => ({
+                  ...prev,
+                  password: e.target.value,
+                }))
+              }
               autoComplete="current-password"
             />
 

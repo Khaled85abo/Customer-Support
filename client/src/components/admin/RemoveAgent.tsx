@@ -1,11 +1,11 @@
-import { useAdminContext } from "../context/adminContext";
+import { useAdminContext } from "../../context/adminContext";
 import React, { useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import { Alert, Grid, Button } from "@mui/material";
 
-import ListComponent from "./List";
-import { AgentType, RESMSGVAIRANTS, ResMsgVariantsType } from "../types";
-import BasicModal from "./Modal";
+import ListComponent from "../List";
+import { AgentType, RESMSGVAIRANTS, ResMsgVariantsType } from "../../types";
+import BasicModal from "../Modal";
 
 const RemoveAgent = () => {
   const { adminState, removeAgent } = useAdminContext();

@@ -4,7 +4,7 @@ import AppBar from "@mui/material/AppBar";
 import { Box, Typography, Button } from "@mui/material";
 import Toolbar from "@mui/material/Toolbar";
 import Container from "@mui/material/Container";
-import SupportPNG from "/support.png";
+import SupportPNG from "/support2.png";
 import { useStateContext } from "../context/stateContext";
 
 function ResponsiveAppBar() {

@@ -1,13 +1,13 @@
 import { Button, Grid, Box, TextField, Typography, Alert } from "@mui/material";
-import { useAdminContext } from "../context/adminContext";
-import * as axios from "../axios";
+import { useAdminContext } from "../../context/adminContext";
+import * as axios from "../../axios";
 import { useState } from "react";
 import {
   AgentDto,
   newAgent,
   RESMSGVAIRANTS,
   ResMsgVariantsType,
-} from "../types";
+} from "../../types";
 const AddAgent = () => {
   const { getSupportAgents } = useAdminContext();
   const [resMsg, setResMsg] = useState<{
@@ -44,8 +44,6 @@ const AddAgent = () => {
         message: error.response.data.error,
         type: RESMSGVAIRANTS.error,
       });
-
-      console.log("resMsg: ", resMsg);
     }
     // const data = new FormData(event.currentTarget);
     // console.log({

@@ -4,7 +4,7 @@ export type AgentType = {
   email: string;
   role: string;
   processing: string;
-  activated: true;
+  activated: boolean;
 };
 
 export type newAgent = {
