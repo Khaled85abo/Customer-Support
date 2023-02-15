@@ -4,9 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "tsc",
+    "start": "node ./dist/application.js",
     "test": "npx jest",
-    "test:coverage": "npx jest --collectCoverage",
-    "start": "nodemon src/app.ts"
+    "test:coverage": "npx jest --collectCoverage"
   },
   "keywords": [],
   "author": "",
