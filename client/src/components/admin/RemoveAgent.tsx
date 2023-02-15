@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import { Alert, Grid, Button } from "@mui/material";
 
 import ListComponent from "../List";
-import { AgentType, RESMSGVAIRANTS, ResMsgVariantsType } from "../../types";
+import { AgentType } from "../../types";
 import BasicModal from "../Modal";
 
 const RemoveAgent = () => {
@@ -25,10 +25,14 @@ const RemoveAgent = () => {
     setAgent(agent);
     setShowWarning(true);
   };
+
+  const resetShowingWarning = () => {
+    setShowWarning(false);
+  };
   return (
     <>
       {showWarning && agent && (
-        <BasicModal close={setShowWarning}>
+        <BasicModal close={resetShowingWarning}>
           <Alert severity="warning">This action can't be undone!</Alert>
           <Grid container spacing={2}>
             <Grid item xs={6}>

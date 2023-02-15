@@ -21,12 +21,12 @@ export default function BasicModal({
   close,
 }: {
   children: React.ReactNode;
-  close: (bool: boolean) => void;
+  close: () => void;
 }) {
   const [open, setOpen] = React.useState(true);
   const handleClose = () => {
     setOpen(false);
-    close(false);
+    close();
   };
 
   return (

@@ -60,7 +60,11 @@ function ResponsiveAppBar() {
           {role && (
             <Box sx={{ textAlign: "right" }}>
               <Typography>Logged in as {role.toUpperCase()}</Typography>
-              <Button variant="contained" onClick={() => logout()}>
+
+              <Button
+                sx={{ color: "white" }}
+                variant="text"
+                onClick={() => logout()}>
                 Logout
               </Button>
             </Box>

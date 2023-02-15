@@ -1,3 +1,6 @@
+import { REFUNDSTATUS } from "../constants/refunds";
+import { OrderItemType } from "./order";
+
 export type RefundType = {
   _id: string;
   agent: string;
@@ -19,10 +22,9 @@ export type RefundType = {
   __v: 0;
 };
 
-export const REFUNDSTATUS = {
-  pending: "pending",
-  accepted: "accepted",
-  declined: "declined",
-  processing: "processing",
-} as const;
+export type RefundDtoType = {
+  order: string;
+  orderItems: OrderItemType[];
+};
+
 export type RefundStatusType = typeof REFUNDSTATUS[keyof typeof REFUNDSTATUS];

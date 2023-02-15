@@ -2,17 +2,12 @@ import {
   createContext,
   useContext,
   useState,
-  useReducer,
   useEffect,
   ReactNode,
 } from "react";
 import * as axios from "../axios";
-import {
-  AgentDto,
-  AgentType,
-  RESMSGVAIRANTS,
-  ResMsgVariantsType,
-} from "../types";
+import { RESMSGVAIRANTS } from "../constants/responseVariants";
+import { AgentDto, AgentType, ResMsgVariantsType } from "../types";
 
 type AdminContextType = {
   getSupportAgents: () => void;

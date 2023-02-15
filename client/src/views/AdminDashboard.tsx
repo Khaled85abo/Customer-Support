@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import AddAgent from "../components/admin/AddAgent";
 import EditAgent from "../components/admin/EditAgent";
 import RemoveAgent from "../components/admin/RemoveAgent";
+import { ADMINACTIONS } from "../constants/actions";
 // import Infobar from "../components/Snackbar";
 import { useAdminContext } from "../context/adminContext";
-import { AdminActionsType, ADMINACTIONS } from "../types/actions";
+import { AdminActionsType } from "../types/actions";
 
 const AdminDashboard = () => {
   const { getSupportAgents, adminState } = useAdminContext();
