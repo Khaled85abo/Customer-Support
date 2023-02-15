@@ -1,6 +1,6 @@
 export const REFUNDSTATUS = {
   pending: "pending",
+  processing: "processing",
   accepted: "accepted",
   declined: "declined",
-  processing: "processing",
 } as const;

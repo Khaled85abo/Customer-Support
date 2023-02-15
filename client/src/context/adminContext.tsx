@@ -54,10 +54,8 @@ export default function AdminContextProvider({
   const getSupportAgents = async () => {
     try {
       const res = await axios.getSupportAgents();
-      console.log("agents", res.data.users);
       setAdminState((prev) => ({ ...prev, agents: res.data.users }));
     } catch (error: any) {
-      console.log("error getting support agents: ", error.response.data.error);
       setAdminState((prev) => ({
         ...prev,
         resMessage: {
@@ -71,30 +69,21 @@ export default function AdminContextProvider({
   const addAgent = async (agent: AgentDto) => {
     try {
       const res = await axios.addAgent(agent);
-      console.log("agent added successfully:");
       getSupportAgents();
-    } catch (error) {
-      console.log("error adding agent");
-    }
+    } catch (error) {}
   };
 
   const removeAgent = async (id: string) => {
     try {
       const res = await axios.deleteAgent(id);
-      console.log("agent deleted successfully");
       getSupportAgents();
-    } catch (error) {
-      console.log("error deleting agent");
-    }
+    } catch (error) {}
   };
 
   const updateAgent = async (id: string, agent: AgentDto) => {
     try {
       const res = await axios.updateAgent(id, agent);
-      console.log("agent updated sucessfuly");
-    } catch (error: any) {
-      console.log("error updating agent: ", error.response.data.error);
-    }
+    } catch (error: any) {}
   };
   const setResMessage = (variant: ResMsgVariantsType, message: string) => {
     setAdminState((prev) => ({
@@ -109,9 +98,7 @@ export default function AdminContextProvider({
     }));
   };
 
-  useEffect(() => {
-    console.log("use effect from admin context provider");
-  }, []);
+  useEffect(() => {}, []);
   const values = {
     getSupportAgents,
     setResMessage,

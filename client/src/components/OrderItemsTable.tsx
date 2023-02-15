@@ -1,4 +1,4 @@
-import { OrderItemType } from "../../types/order";
+import { OrderItemType } from "../types/order";
 
 const OrderItemsTable = ({ orderItems }: { orderItems: OrderItemType[] }) => {
   return (

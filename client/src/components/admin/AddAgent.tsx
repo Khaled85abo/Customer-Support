@@ -24,11 +24,9 @@ const AddAgent = () => {
   };
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log("new agent to add", newAgent);
 
     try {
       const res = await axios.addAgent(newAgent);
-      console.log("new user created: ", res.data);
       setResMsg({
         message: res.data.message,
         type: RESMSGVAIRANTS.success,
@@ -41,22 +39,11 @@ const AddAgent = () => {
         type: RESMSGVAIRANTS.error,
       });
     }
-    // const data = new FormData(event.currentTarget);
-    // console.log({
-    //   name: data.get("name"),
-    //   email: data.get("email"),
-    //   password: data.get("password"),
-    // });
-    // addAgent({
-    //   name: data.get("name"),
-    //   email: data.get("email"),
-    //   password: data.get("password"),
-    // });
   };
 
   return (
     <>
-      <Typography component="h1" variant="h5">
+      <Typography component="h1" variant="h4">
         Add support agent
       </Typography>
 

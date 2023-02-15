@@ -1,6 +1,4 @@
-import { Box, Stack } from "@mui/material";
-import MediaCard from "../components/client/ProductCard";
-import { ProductType } from "../types/product";
+import { Stack } from "@mui/material";
 import RefundsTable from "../components/client/RefundTable";
 import OrdersTable from "../components/client/OrdersTable";
 

@@ -44,11 +44,9 @@ export default function RefundsCheckList({
   };
 
   const handleRequestRefund = async () => {
-    console.log(checked);
     const refundItems = order.orderItems.filter((item, itemIndex) =>
       checked.some((index) => index == itemIndex)
     );
-    console.log("item to refund: ", refundItems);
     try {
       await axios.createRefund({ order: order._id, orderItems: refundItems });
       getRefunds();
@@ -73,9 +71,12 @@ export default function RefundsCheckList({
                   onChange={handleToggle(index)}
                   checked={checked.indexOf(index) !== -1}
                   inputProps={{ "aria-labelledby": labelId }}
-                  disabled={refundOrders[order._id].refundItems.some(
-                    (refundItem) => refundItem._id == orderItem._id
-                  )}
+                  disabled={
+                    refundOrders[order._id] &&
+                    refundOrders[order._id].refundItems.some(
+                      (refundItem) => refundItem._id == orderItem._id
+                    )
+                  }
                 />
               }
               disablePadding>

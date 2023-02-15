@@ -33,7 +33,6 @@ const EditAgent = () => {
     }
     try {
       const res = await axios.updateAgent(agentToEdit?._id!, { name });
-      console.log("agent name: ", name);
       setResMsg({
         message: res.data.message,
         type: RESMSGVAIRANTS.success,

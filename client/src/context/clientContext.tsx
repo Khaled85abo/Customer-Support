@@ -6,31 +6,30 @@ import {
   ReactNode,
 } from "react";
 import * as axios from "../axios";
-import { RefundDtoType, RefundStatusType, RefundType } from "../types/refund";
-type OrdersState = {
+import { RefundStatusType, RefundType } from "../types/refund";
+type OrdersStateType = {
   loading: boolean;
   orders: [];
   error: string | null;
 };
 
-type RefundOrder = {
+type RefundOrderType = {
   status: RefundStatusType;
   refundItems: { _id: string; status: RefundStatusType }[];
 };
 
-type RefundsState = {
+export type RefundsStateType = {
   loading: boolean;
   refunds: RefundType[];
-  refundOrders: { [key: string]: RefundOrder };
+  refundOrders: { [key: string]: RefundOrderType };
   error: string | null;
 };
 
 type ClientContextType = {
-  orders: OrdersState;
-  refunds: RefundsState;
+  orders: OrdersStateType;
+  refunds: RefundsStateType;
   getORders: () => void;
   getRefunds: () => void;
-  number: number;
 };
 
 const ClientContext = createContext<ClientContextType | null>(null);
@@ -50,14 +49,13 @@ export default function ClientContextProvider({
 }: {
   children: ReactNode;
 }) {
-  const number = 10;
-  const [orders, setOrders] = useState<OrdersState>({
+  const [orders, setOrders] = useState<OrdersStateType>({
     loading: false,
     orders: [],
     error: null,
   });
 
-  const [refunds, setRefunds] = useState<RefundsState>({
+  const [refunds, setRefunds] = useState<RefundsStateType>({
     loading: false,
     refunds: [],
     refundOrders: {},
@@ -66,9 +64,9 @@ export default function ClientContextProvider({
 
   const extractRefundOrders = (
     refunds: RefundType[]
-  ): { [key: string]: RefundOrder } => {
+  ): { [key: string]: RefundOrderType } => {
     const refundOrders = refunds.reduce(
-      (prev: { [key: string]: RefundOrder }, curr: RefundType) => {
+      (prev: { [key: string]: RefundOrderType }, curr: RefundType) => {
         if (!prev[curr.order]) {
           prev[curr.order] = { status: curr.status, refundItems: [] };
         }
@@ -124,7 +122,6 @@ export default function ClientContextProvider({
     refunds,
     getORders,
     getRefunds,
-    number,
   };
   return (
     <ClientContext.Provider value={values}>{children}</ClientContext.Provider>

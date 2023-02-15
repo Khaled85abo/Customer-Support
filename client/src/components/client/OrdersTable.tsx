@@ -1,10 +1,10 @@
 import { useClientContext } from "../../context/clientContext";
-import { OrderItemType, OrderType } from "../../types/order";
-import { Typography, Alert, Box, Grid, Button, Stack } from "@mui/material";
+import { OrderType } from "../../types/order";
+import { Typography, Alert, Button } from "@mui/material";
 import { useState } from "react";
 import RefundsCheckBoxList from "./RefundsCheckList";
 import BasicModal from "../Modal";
-import OrderItemsTable from "./OrderItemsTable";
+import OrderItemsTable from "../OrderItemsTable";
 
 const OrdersTable = () => {
   const {
@@ -38,6 +38,9 @@ const OrdersTable = () => {
 
   return (
     <>
+      <Typography variant="h4" component="h1" align="center" mt={1} mb={1}>
+        Your orders
+      </Typography>
       <table>
         <thead>
           <tr>

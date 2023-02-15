@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useClientContext } from "../../context/clientContext";
 import { RefundType } from "../../types/refund";
 import { Typography, Alert, Button, Stack, Grid } from "@mui/material";
-import OrderItemsTable from "./OrderItemsTable";
+import OrderItemsTable from "../OrderItemsTable";
 import { REFUNDSTATUS } from "../../constants/refunds";
 import BasicModal from "../Modal";
 import * as axios from "../../axios";
@@ -24,9 +24,7 @@ const RefundsTable = () => {
   };
 
   const handleRemoveRefund = async () => {
-    console.log(refundId);
     if (!refundId) return;
-
     try {
       await axios.removeRefund(refundId);
       resetRefundId();
@@ -50,8 +48,19 @@ const RefundsTable = () => {
     );
   }
 
+  if (refunds.length == 0) {
+    return (
+      <Typography variant="h4" component="h1" align="center" mt={1} mb={1}>
+        You don't have any refunds
+      </Typography>
+    );
+  }
+
   return (
     <>
+      <Typography variant="h4" component="h1" align="center" mt={1} mb={1}>
+        Your refunds
+      </Typography>
       <table>
         <thead>
           <tr>
@@ -65,12 +74,13 @@ const RefundsTable = () => {
               <tr key={refund._id}>
                 <td>
                   <Typography variant="h6">{refund.status}</Typography>
-                  {refund.status == REFUNDSTATUS.pending ||
-                    (refund.status == REFUNDSTATUS.processing && (
-                      <Button onClick={() => setRefundId(refund._id)}>
-                        Cancel Refund
-                      </Button>
-                    ))}
+
+                  {(refund.status === REFUNDSTATUS.processing ||
+                    refund.status === REFUNDSTATUS.pending) && (
+                    <Button onClick={() => setRefundId(refund._id)}>
+                      Cancel Refund
+                    </Button>
+                  )}
                 </td>
                 <td>
                   <OrderItemsTable orderItems={refund.orderItems} />
