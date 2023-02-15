@@ -2,7 +2,7 @@ import axios from "axios";
 import { AgentDto, CredentialsType } from "../types";
 import { RefundDtoType, RefundStatusType } from "../types/refund";
 
-axios.defaults.baseURL = "http://localhost:3030/api";
+axios.defaults.baseURL = "https://customer-server-m4xg.onrender.com/api";
 
 export function saveToken(token: string) {
   axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
