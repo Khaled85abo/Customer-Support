@@ -7,6 +7,7 @@ import Employee, { isValid } from "../models/employee.model";
 import Refund from "../models/refund.model";
 import createToken from "../utils/createToken";
 import { IEmplyee } from "../models/employee.model";
+import { REFUNDSTATUS } from "../constants/refunds";
 // @desc    Authenticate employee => send token back
 // @route   Post /api/users/auth/employee
 // @access  public
@@ -104,9 +105,9 @@ const deleteSupportAgent = async (req: Request, res: Response) => {
   const agent = await Employee.findById(req.params.id);
   if (!agent) throw new Error(ERRORS.not_found);
   if (agent.processing) {
-    await Refund.findByIdAndUpdate(
+    await Refund.findOneAndUpdate(
       { agent: agent.processing },
-      { agent: null }
+      { agent: null, status: REFUNDSTATUS.pending }
     );
   }
   await Employee.deleteOne({ _id: req.params.id });

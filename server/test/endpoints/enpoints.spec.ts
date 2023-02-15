@@ -11,9 +11,9 @@ describe("404 endpoint", () => {
 });
 
 describe("Client endpoints", () => {
-  test("POST /api/users/login --> {toke:''}", async () => {
+  test("POST /api/users/auth --> {toke:''}", async () => {
     const res = await requestWithSupertest
-      .post("/api/users/login")
+      .post("/api/users/auth")
       .send({
         email: "su@se.se",
         password: "123456",
@@ -40,12 +40,12 @@ describe("Client endpoints", () => {
 });
 
 describe("Support agent endpoints", () => {
-  test("POST /api/users/login/employee --> {toke:''}", async () => {
-    // Login
+  test("POST /api/users/auth/employee --> {toke:''}", async () => {
+    // auth
     const res = await requestWithSupertest
-      .post("/api/users/login/employee")
+      .post("/api/users/auth/employee")
       .send({
-        email: "johan@se.se",
+        email: "001@se.se",
         password: "123456",
       })
       .set("Content-Type", "application/json")
@@ -74,10 +74,10 @@ describe("Support agent endpoints", () => {
 });
 
 describe("Admin enpoints", () => {
-  test("POST /api/users/login/employee --> {toke:''} && /api/user/roles --> {ROLES:{}} ", async () => {
-    // Login
+  test("POST /api/users/auth/employee --> {toke:''} && /api/user/roles --> {ROLES:{}} ", async () => {
+    // auth
     const res = await requestWithSupertest
-      .post("/api/users/login/employee")
+      .post("/api/users/auth/employee")
       .send({
         email: "admin@se.se",
         password: "123456",
@@ -138,19 +138,17 @@ describe("Admin enpoints", () => {
       .set("Content-Type", "application/json")
       .set("Accept", "application/json")
       .set("Authorization", `Bearer ${res.body.token}`);
-    console.log("new agent created: ", newAgentRes.body.user.name);
 
     expect(newAgentRes.status).toBe(200);
     expect(newAgentRes.body.user.name).toBe("007");
 
     // Update support agent
     const updatedAgent = await requestWithSupertest
-      .put(`/api/users/${newAgentRes.body.user._id}`)
+      .patch(`/api/users/${newAgentRes.body.user._id}`)
       .send({ name: "008" })
       .set("Content-Type", "application/json")
       .set("Accept", "application/json")
       .set("Authorization", `Bearer ${res.body.token}`);
-    console.log("new agent created: ", updatedAgent.body.user.name);
 
     expect(updatedAgent.status).toBe(200);
     expect(updatedAgent.body.user.name).toBe("008");

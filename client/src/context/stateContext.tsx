@@ -11,7 +11,6 @@ type StateContextType = {
   authorized: boolean;
   login: (isClient: boolean, email: string, password: string) => void;
   loginState: LoginState;
-  getRoles: () => void;
   logout: () => void;
   setUiError: (error: string) => void;
   resetUiError: () => void;
@@ -106,17 +105,10 @@ export default function StateContextProvider({
       } else {
         res = await axios.loginEmployee({ email, password });
       }
-      // if (!res.error) {
-      //   dispatch({ type: "success", payload: res.data });
-      // } else {
-      //   throw new Error(res.error);
-      // }
-      console.log("success login data: ", res.data);
 
       saveToken(res.data.token);
       dispatch({ type: "success", payload: res.data.role });
     } catch (error: any) {
-      console.log("failed loging");
       dispatch({ type: "error", payload: error.response.data.error });
     }
   };
@@ -128,16 +120,6 @@ export default function StateContextProvider({
     dispatch({ type: "resetError" });
   };
 
-  const getRoles = async () => {
-    try {
-      const res = await axios.getRoles();
-      console.log("recied roles for amdin: ", res);
-    } catch (error: any) {
-      console.log("error recieving data: ", error);
-      console.log("error message: ", error.response.data.error);
-    }
-  };
-
   const logout = () => {
     dispatch({ type: "logOut" });
     axios.removeToken();
@@ -146,7 +128,6 @@ export default function StateContextProvider({
   const values = {
     authorized,
     login,
-    getRoles,
     loginState,
     logout,
     setUiError,

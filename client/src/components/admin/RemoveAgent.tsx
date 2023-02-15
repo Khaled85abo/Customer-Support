@@ -14,9 +14,6 @@ const RemoveAgent = () => {
   const [showWarning, setShowWarning] = useState(false);
 
   const handleRemoveAgent = (agent: AgentType) => {
-    console.log("handle remove agent: ", agent);
-    console.log("agent id: ", agent._id);
-
     removeAgent(agent._id);
     setShowWarning(false);
   };

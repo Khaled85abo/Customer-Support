@@ -1,20 +1,22 @@
-import { useState } from "react";
-import { useClientContext } from "../../context/clientContext";
-import { RefundType } from "../../types/refund";
-import { Typography, Alert, Button, Stack, Grid } from "@mui/material";
+import { useState, useEffect } from "react";
+import { Typography, Alert, Button, Box, Grid, Stack } from "@mui/material";
 import OrderItemsTable from "../OrderItemsTable";
 import { REFUNDSTATUS } from "../../constants/refunds";
-import BasicModal from "../Modal";
+import { RefundStatusType, RefundType } from "../../types/refund";
 import * as axios from "../../axios";
-const RefundsTable = () => {
+import BasicModal from "../Modal";
+import { useAgentContext } from "../../context/agentContext";
+
+const AssignRefund = () => {
   const {
     refunds: { refunds, error, loading },
+    myRefunds,
+    getMyRefunds,
     getRefunds,
-  } = useClientContext();
-
+  } = useAgentContext();
   const [refundId, setRefundId] = useState<string | null>(null);
   const [resError, setResError] = useState("");
-
+  const [hasRefund, setHasRefund] = useState(true);
   const resetRefundId = () => {
     setRefundId(null);
   };
@@ -23,43 +25,34 @@ const RefundsTable = () => {
     setResError("");
   };
 
-  const handleRemoveRefund = async () => {
+  const handleAssignRefund = async () => {
     if (!refundId) return;
+
     try {
-      await axios.removeRefund(refundId);
+      await axios.setAgent(refundId);
       resetRefundId();
+      getMyRefunds();
       getRefunds();
     } catch (error: any) {
       setResError(error.response.body.error);
     }
   };
-  if (loading) {
-    return (
-      <Typography variant="h4" color="text.primary" align="center">
-        LOADING...
-      </Typography>
-    );
-  }
-  if (error) {
-    return (
-      <Alert sx={{ mt: 3 }} severity="error">
-        {error}
-      </Alert>
-    );
-  }
+
+  useEffect(() => {
+    setHasRefund(myRefunds.refunds.length > 0);
+  }, []);
 
   if (refunds.length == 0) {
     return (
       <Typography variant="h4" component="h1" align="center" mt={1} mb={1}>
-        You don't have any refunds
+        There are no refunds to show
       </Typography>
     );
   }
-
   return (
     <>
       <Typography variant="h4" component="h1" align="center" mt={1} mb={1}>
-        Your refunds
+        All refunds
       </Typography>
       <table>
         <thead>
@@ -75,12 +68,9 @@ const RefundsTable = () => {
                 <td>
                   <Typography variant="h6">{refund.status}</Typography>
 
-                  {(refund.status === REFUNDSTATUS.processing ||
-                    refund.status === REFUNDSTATUS.pending) && (
-                    <Button onClick={() => setRefundId(refund._id)}>
-                      Cancel Refund
-                    </Button>
-                  )}
+                  <Button onClick={() => setRefundId(refund._id)}>
+                    Process this refund
+                  </Button>
                 </td>
                 <td>
                   <OrderItemsTable orderItems={refund.orderItems} />
@@ -91,29 +81,37 @@ const RefundsTable = () => {
       </table>
       {refundId && (
         <BasicModal close={resetRefundId}>
-          <Stack sx={{ textAlign: "center" }}>
-            {resError && <Alert severity="error">{resError}</Alert>}
-            <Alert severity="error">
-              Are you sure you want to delete this refund request!
-            </Alert>
-            <Grid mt={1} container spacing={4}>
+          <Stack spacing={1}>
+            {!hasRefund && (
+              <Alert severity="info">
+                Are you sure you want to process this refund?
+              </Alert>
+            )}
+            {hasRefund && (
+              <Alert severity="info">
+                Sorry, But can't process more than one cas at a time
+              </Alert>
+            )}
+
+            <Grid container spacing={4}>
               <Grid item xs={6}>
                 <Button
-                  size="medium"
-                  variant="contained"
-                  onClick={resetRefundId}>
-                  Close
-                </Button>
-              </Grid>
-              <Grid item xs={6}>
-                <Button
-                  size="medium"
                   variant="contained"
                   color="error"
-                  onClick={handleRemoveRefund}>
-                  Confirm
+                  onClick={resetRefundId}>
+                  Cancel
                 </Button>
               </Grid>
+              {!hasRefund && (
+                <Grid item xs={6}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleAssignRefund()}>
+                    Sure
+                  </Button>
+                </Grid>
+              )}
             </Grid>
           </Stack>
         </BasicModal>
@@ -122,4 +120,4 @@ const RefundsTable = () => {
   );
 };
 
-export default RefundsTable;
+export default AssignRefund;

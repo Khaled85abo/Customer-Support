@@ -1,17 +1,18 @@
-import { useState } from "react";
-import { useClientContext } from "../../context/clientContext";
-import { RefundType } from "../../types/refund";
-import { Typography, Alert, Button, Stack, Grid } from "@mui/material";
+import { useState, ReactNode } from "react";
+import { Typography, Alert, Button, Box, Grid } from "@mui/material";
 import OrderItemsTable from "../OrderItemsTable";
 import { REFUNDSTATUS } from "../../constants/refunds";
-import BasicModal from "../Modal";
+import { RefundStatusType, RefundType } from "../../types/refund";
 import * as axios from "../../axios";
-const RefundsTable = () => {
-  const {
-    refunds: { refunds, error, loading },
-    getRefunds,
-  } = useClientContext();
+import BasicModal from "../Modal";
+import { useAgentContext } from "../../context/agentContext";
 
+const ResolveRefund = () => {
+  const {
+    myRefunds: { refunds },
+    getMyRefunds,
+    getRefunds,
+  } = useAgentContext();
   const [refundId, setRefundId] = useState<string | null>(null);
   const [resError, setResError] = useState("");
 
@@ -23,43 +24,30 @@ const RefundsTable = () => {
     setResError("");
   };
 
-  const handleRemoveRefund = async () => {
+  const handleResolveRefund = async (status: RefundStatusType) => {
     if (!refundId) return;
+
     try {
-      await axios.removeRefund(refundId);
+      await axios.resolveRefund(refundId, { status });
       resetRefundId();
+      getMyRefunds();
       getRefunds();
     } catch (error: any) {
       setResError(error.response.body.error);
     }
   };
-  if (loading) {
-    return (
-      <Typography variant="h4" color="text.primary" align="center">
-        LOADING...
-      </Typography>
-    );
-  }
-  if (error) {
-    return (
-      <Alert sx={{ mt: 3 }} severity="error">
-        {error}
-      </Alert>
-    );
-  }
 
   if (refunds.length == 0) {
     return (
       <Typography variant="h4" component="h1" align="center" mt={1} mb={1}>
-        You don't have any refunds
+        You don't have any refunds to resolve
       </Typography>
     );
   }
-
   return (
     <>
       <Typography variant="h4" component="h1" align="center" mt={1} mb={1}>
-        Your refunds
+        Refund to resolve
       </Typography>
       <table>
         <thead>
@@ -75,12 +63,9 @@ const RefundsTable = () => {
                 <td>
                   <Typography variant="h6">{refund.status}</Typography>
 
-                  {(refund.status === REFUNDSTATUS.processing ||
-                    refund.status === REFUNDSTATUS.pending) && (
-                    <Button onClick={() => setRefundId(refund._id)}>
-                      Cancel Refund
-                    </Button>
-                  )}
+                  <Button onClick={() => setRefundId(refund._id)}>
+                    Resolve Refund
+                  </Button>
                 </td>
                 <td>
                   <OrderItemsTable orderItems={refund.orderItems} />
@@ -91,35 +76,30 @@ const RefundsTable = () => {
       </table>
       {refundId && (
         <BasicModal close={resetRefundId}>
-          <Stack sx={{ textAlign: "center" }}>
-            {resError && <Alert severity="error">{resError}</Alert>}
-            <Alert severity="error">
-              Are you sure you want to delete this refund request!
-            </Alert>
-            <Grid mt={1} container spacing={4}>
+          <Box sx={{ textAlign: "center" }}>
+            <Grid container spacing={4}>
               <Grid item xs={6}>
                 <Button
-                  size="medium"
                   variant="contained"
-                  onClick={resetRefundId}>
-                  Close
+                  color="error"
+                  onClick={() => handleResolveRefund(REFUNDSTATUS.declined)}>
+                  decline
                 </Button>
               </Grid>
               <Grid item xs={6}>
                 <Button
-                  size="medium"
                   variant="contained"
-                  color="error"
-                  onClick={handleRemoveRefund}>
-                  Confirm
+                  color="primary"
+                  onClick={() => handleResolveRefund(REFUNDSTATUS.accepted)}>
+                  Accept
                 </Button>
               </Grid>
             </Grid>
-          </Stack>
+          </Box>
         </BasicModal>
       )}
     </>
   );
 };
 
-export default RefundsTable;
+export default ResolveRefund;
