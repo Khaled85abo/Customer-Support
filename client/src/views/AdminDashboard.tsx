@@ -1,9 +1,9 @@
 import { Button, Grid, Box, TextField, Typography } from "@mui/material";
 
 import { useEffect, useState } from "react";
-import AddAgent from "../components/AddAgent";
-import EditAgent from "../components/EditAgent";
-import RemoveAgent from "../components/RemoveAgent";
+import AddAgent from "../components/admin/AddAgent";
+import EditAgent from "../components/admin/EditAgent";
+import RemoveAgent from "../components/admin/RemoveAgent";
 // import Infobar from "../components/Snackbar";
 import { useAdminContext } from "../context/adminContext";
 import { AdminActionsType, ADMINACTIONS } from "../types/actions";

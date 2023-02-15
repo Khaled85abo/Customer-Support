@@ -1,9 +1,9 @@
-import { useAdminContext } from "../context/adminContext";
+import { useAdminContext } from "../../context/adminContext";
 import { useEffect, useState } from "react";
-import { AgentType, RESMSGVAIRANTS, ResMsgVariantsType } from "../types";
-import ListComponent from "./List";
+import { AgentType, RESMSGVAIRANTS, ResMsgVariantsType } from "../../types";
+import ListComponent from "../List";
 import { Button, Grid, Box, TextField, Typography, Alert } from "@mui/material";
-import * as axios from "../axios";
+import * as axios from "../../axios";
 
 const EditAgent = () => {
   const { adminState, getSupportAgents } = useAdminContext();

@@ -9,10 +9,12 @@ import * as axios from "../axios";
 import { saveToken } from "../axios";
 type StateContextType = {
   authorized: boolean;
-  onSubmit: (isClient: boolean, email: string, password: string) => void;
+  login: (isClient: boolean, email: string, password: string) => void;
   loginState: LoginState;
   getRoles: () => void;
   logout: () => void;
+  setUiError: (error: string) => void;
+  resetUiError: () => void;
 };
 interface LoginState {
   isLoading: boolean;
@@ -40,7 +42,7 @@ const initialState: LoginState = {
 };
 
 type LoginAction =
-  | { type: "login" | "logOut" }
+  | { type: "login" | "logOut" | "resetError" }
   | { type: "error" | "success"; payload: string };
 
 function loginReducer(state: LoginState, action: LoginAction): LoginState {
@@ -75,19 +77,26 @@ function loginReducer(state: LoginState, action: LoginAction): LoginState {
         isLoggedIn: false,
       };
     }
+    case "resetError": {
+      return {
+        ...state,
+        error: "",
+      };
+    }
     default:
       return state;
   }
 }
 
-export function StateContextProvider({ children }: { children: ReactNode }) {
+export default function StateContextProvider({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const [authorized, setAuthorized] = useState<boolean>(true);
   const [loginState, dispatch] = useReducer(loginReducer, initialState);
-  const onSubmit = async (
-    isClient: boolean,
-    email: string,
-    password: string
-  ) => {
+
+  const login = async (isClient: boolean, email: string, password: string) => {
     dispatch({ type: "login" });
 
     try {
@@ -112,6 +121,13 @@ export function StateContextProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const setUiError = (error: string) => {
+    dispatch({ type: "error", payload: error });
+  };
+  const resetUiError = () => {
+    dispatch({ type: "resetError" });
+  };
+
   const getRoles = async () => {
     try {
       const res = await axios.getRoles();
@@ -129,10 +145,12 @@ export function StateContextProvider({ children }: { children: ReactNode }) {
   };
   const values = {
     authorized,
-    onSubmit,
+    login,
     getRoles,
     loginState,
     logout,
+    setUiError,
+    resetUiError,
   };
 
   return (

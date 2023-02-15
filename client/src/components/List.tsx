@@ -38,13 +38,6 @@ const ListComponent = ({ agents, action }: ListType) => {
           }
           disablePadding>
           <ListItemButton>
-            {/* <ListItemAvatar>
-              <Avatar
-                  alt={`Avatar n°${value + 1}`}
-                  src={`/static/images/avatar/${value + 1}.jpg`}
-                />
-            </ListItemAvatar> */}
-            {/* <ListItemText id={index} primary={`Line item ${index}`} /> */}
             <Typography variant="body2" sx={{ mr: 2 }}>
               {agent.name}
             </Typography>
