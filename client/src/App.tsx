@@ -9,6 +9,7 @@ import ResponsiveAppBar from "./components/AppBar";
 import AdminContextProvider from "./context/adminContext";
 import ClientContextProvider from "./context/clientContext";
 import { Box } from "@mui/material";
+import AgentContextProvider from "./context/agentContext";
 
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const location = useLocation();
@@ -45,7 +46,9 @@ function App() {
             path="/support-agent"
             element={
               <ProtectedRoute>
-                <AgentDashboard />
+                <AgentContextProvider>
+                  <AgentDashboard />
+                </AgentContextProvider>
               </ProtectedRoute>
             }
           />

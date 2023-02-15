@@ -5,8 +5,14 @@ import { REFUNDSTATUS } from "../../constants/refunds";
 import { RefundStatusType, RefundType } from "../../types/refund";
 import * as axios from "../../axios";
 import BasicModal from "../Modal";
+import { useAgentContext } from "../../context/agentContext";
 
-const ResolveRefund = ({ refunds }: { refunds: RefundType[] }) => {
+const ResolveRefund = () => {
+  const {
+    myRefunds: { refunds },
+    getMyRefunds,
+    getRefunds,
+  } = useAgentContext();
   const [refundId, setRefundId] = useState<string | null>(null);
   const [resError, setResError] = useState("");
 
@@ -24,10 +30,20 @@ const ResolveRefund = ({ refunds }: { refunds: RefundType[] }) => {
     try {
       await axios.resolveRefund(refundId, { status });
       resetRefundId();
+      getMyRefunds();
+      getRefunds();
     } catch (error: any) {
       setResError(error.response.body.error);
     }
   };
+
+  if (refunds.length == 0) {
+    return (
+      <Typography variant="h4" component="h1" align="center" mt={1} mb={1}>
+        You don't have any refunds to resolve
+      </Typography>
+    );
+  }
   return (
     <>
       <Typography variant="h4" component="h1" align="center" mt={1} mb={1}>

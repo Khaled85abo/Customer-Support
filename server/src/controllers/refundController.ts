@@ -90,9 +90,10 @@ const getOrderRefunds = async (req: Request, res: Response) => {
 // @route   GET /api/refunds/agent-refund
 // @access  private agent
 const getAgentRefund = async (req: Request, res: Response) => {
-  console.log("agent is from res.locals.user.id: ", res.locals.user.id);
-
-  const refunds = await Refund.find({ agent: res.locals.user.id });
+  const refunds = await Refund.find({
+    agent: res.locals.user.id,
+    status: REFUNDSTATUS.processing,
+  });
   res.send({ refunds });
 };
 
@@ -122,9 +123,9 @@ const resolveRefund = async (req: Request, res: Response) => {
   const refund = await Refund.findOne({ _id: req.params.id });
   if (!refund) throw new Error(ERRORS.not_found);
 
+  await Employee.updateOne({ _id: refund.agent }, { processing: null });
   refund.status = status;
   refund.save();
-
   res.send({ message: "Refund updated successfuly", refund });
 };
 

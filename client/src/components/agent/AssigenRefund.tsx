@@ -1,21 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Typography, Alert, Button, Box, Grid, Stack } from "@mui/material";
 import OrderItemsTable from "../OrderItemsTable";
 import { REFUNDSTATUS } from "../../constants/refunds";
 import { RefundStatusType, RefundType } from "../../types/refund";
 import * as axios from "../../axios";
 import BasicModal from "../Modal";
+import { useAgentContext } from "../../context/agentContext";
 
-const AssignRefund = ({
-  refunds,
-  hasRefund,
-}: {
-  refunds: RefundType[];
-  hasRefund: boolean;
-}) => {
+const AssignRefund = () => {
+  const {
+    refunds: { refunds, error, loading },
+    myRefunds,
+    getMyRefunds,
+    getRefunds,
+  } = useAgentContext();
   const [refundId, setRefundId] = useState<string | null>(null);
   const [resError, setResError] = useState("");
-
+  const [hasRefund, setHasRefund] = useState(true);
   const resetRefundId = () => {
     setRefundId(null);
   };
@@ -30,10 +31,24 @@ const AssignRefund = ({
     try {
       await axios.setAgent(refundId);
       resetRefundId();
+      getMyRefunds();
+      getRefunds();
     } catch (error: any) {
       setResError(error.response.body.error);
     }
   };
+
+  useEffect(() => {
+    setHasRefund(myRefunds.refunds.length > 0);
+  }, []);
+
+  if (refunds.length == 0) {
+    return (
+      <Typography variant="h4" component="h1" align="center" mt={1} mb={1}>
+        There are no refunds to show
+      </Typography>
+    );
+  }
   return (
     <>
       <Typography variant="h4" component="h1" align="center" mt={1} mb={1}>
