@@ -74,13 +74,16 @@ const RefundsTable = () => {
               <tr key={refund._id}>
                 <td>
                   <Typography variant="h6">{refund.status}</Typography>
-
-                  {(refund.status === REFUNDSTATUS.processing ||
+                  {/* Commented for testing purposes */}
+                  {/* {(refund.status === REFUNDSTATUS.processing ||
                     refund.status === REFUNDSTATUS.pending) && (
                     <Button onClick={() => setRefundId(refund._id)}>
                       Cancel Refund
                     </Button>
-                  )}
+                  )} */}
+                  <Button onClick={() => setRefundId(refund._id)}>
+                    Cancel Refund
+                  </Button>
                 </td>
                 <td>
                   <OrderItemsTable orderItems={refund.orderItems} />
