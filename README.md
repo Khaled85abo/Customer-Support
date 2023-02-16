@@ -2,9 +2,7 @@
 
 ## Testing a deployed version
 
-```bash
 [Return center](https://customer-support-9frsrivay-khaled85abo.vercel.app/)
-```
 
 ## Please note
 
