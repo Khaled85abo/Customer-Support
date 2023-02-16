@@ -28,7 +28,6 @@ const getRefundById = async (req: Request, res: Response) => {
 const createRefund = async (req: Request, res: Response) => {
   const { order, orderItems } = req.body;
   // Check if any product exists in already existing refund
-  //****** Fix bugg order can exist in multiple refunds *******/
   const existingRefundsArray = await Refund.find({ order });
   if (existingRefundsArray.length > 0) {
     for (let orderItem of orderItems) {

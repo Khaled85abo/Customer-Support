@@ -40,20 +40,32 @@ const initialState: LoginState = {
   isLoggedIn: false,
 };
 
+const PAYLOADACTIONS = {
+  error: "error",
+  success: "success",
+} as const;
+const SOLOACTIONS = {
+  login: "login",
+  logOut: "logOut",
+  resetError: "resetError",
+} as const;
+type PayloadActionsType = typeof PAYLOADACTIONS[keyof typeof PAYLOADACTIONS];
+type soloActionsType = typeof SOLOACTIONS[keyof typeof SOLOACTIONS];
+
 type LoginAction =
-  | { type: "login" | "logOut" | "resetError" }
-  | { type: "error" | "success"; payload: string };
+  | { type: soloActionsType }
+  | { type: PayloadActionsType; payload: string };
 
 function loginReducer(state: LoginState, action: LoginAction): LoginState {
   switch (action.type) {
-    case "login": {
+    case SOLOACTIONS.login: {
       return {
         ...state,
         error: "",
         isLoading: true,
       };
     }
-    case "success": {
+    case PAYLOADACTIONS.success: {
       return {
         ...state,
         role: action.payload,
@@ -61,7 +73,7 @@ function loginReducer(state: LoginState, action: LoginAction): LoginState {
         isLoading: false,
       };
     }
-    case "error": {
+    case PAYLOADACTIONS.error: {
       return {
         ...state,
         error: action.payload,
@@ -69,14 +81,14 @@ function loginReducer(state: LoginState, action: LoginAction): LoginState {
         isLoading: false,
       };
     }
-    case "logOut": {
+    case SOLOACTIONS.logOut: {
       return {
         ...state,
         role: null,
         isLoggedIn: false,
       };
     }
-    case "resetError": {
+    case SOLOACTIONS.resetError: {
       return {
         ...state,
         error: "",
@@ -94,12 +106,17 @@ export default function StateContextProvider({
 }) {
   const [authorized, setAuthorized] = useState<boolean>(true);
   const [loginState, dispatch] = useReducer(loginReducer, initialState);
-
+  const [stateLogin, setStateLogin] = useState<{
+    error: string;
+    role: string | null;
+    loggedin: boolean;
+    loading: boolean;
+  }>({ error: "", role: null, loggedin: false, loading: false });
   const login = async (isClient: boolean, email: string, password: string) => {
-    dispatch({ type: "login" });
-
+    dispatch({ type: SOLOACTIONS.login });
+    setStateLogin((prev) => ({ ...prev, loading: true }));
     try {
-      let res;
+      let res: { data: { token: string; role: string } };
       if (isClient) {
         res = await axios.loginClient({ email, password });
       } else {
@@ -107,21 +124,30 @@ export default function StateContextProvider({
       }
 
       saveToken(res.data.token);
-      dispatch({ type: "success", payload: res.data.role });
+      dispatch({ type: PAYLOADACTIONS.success, payload: res.data.role });
+      setStateLogin((prev) => ({ ...prev, role: res.data.role }));
     } catch (error: any) {
-      dispatch({ type: "error", payload: error.response.data.error });
+      setStateLogin((prev) => ({
+        ...prev,
+        error: error.response.data.error,
+        loading: false,
+      }));
+      dispatch({
+        type: PAYLOADACTIONS.error,
+        payload: error.response.data.error,
+      });
     }
   };
 
   const setUiError = (error: string) => {
-    dispatch({ type: "error", payload: error });
+    dispatch({ type: PAYLOADACTIONS.error, payload: error });
   };
   const resetUiError = () => {
-    dispatch({ type: "resetError" });
+    dispatch({ type: SOLOACTIONS.resetError });
   };
 
   const logout = () => {
-    dispatch({ type: "logOut" });
+    dispatch({ type: SOLOACTIONS.logOut });
     axios.removeToken();
   };
   const values = {
