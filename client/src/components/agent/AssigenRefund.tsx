@@ -44,14 +44,14 @@ const AssignRefund = () => {
 
   if (refunds.length == 0) {
     return (
-      <Typography variant="h4" component="h1" align="center" mt={1} mb={1}>
+      <Typography variant="h5" component="h2" align="center" mt={1} mb={1}>
         There are no refunds to show
       </Typography>
     );
   }
   return (
     <>
-      <Typography variant="h4" component="h1" align="center" mt={1} mb={1}>
+      <Typography variant="h5" component="h2" align="center" mt={1} mb={1}>
         All refunds
       </Typography>
       <table>

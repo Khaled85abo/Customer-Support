@@ -35,7 +35,7 @@ const RefundsTable = () => {
   };
   if (loading) {
     return (
-      <Typography variant="h4" color="text.primary" align="center">
+      <Typography variant="h5" color="text.primary" align="center">
         LOADING...
       </Typography>
     );
@@ -50,7 +50,7 @@ const RefundsTable = () => {
 
   if (refunds.length == 0) {
     return (
-      <Typography variant="h4" component="h1" align="center" mt={1} mb={1}>
+      <Typography variant="h5" component="h1" align="center" mt={1} mb={1}>
         You don't have any refunds
       </Typography>
     );

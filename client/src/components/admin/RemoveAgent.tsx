@@ -1,6 +1,5 @@
 import { useAdminContext } from "../../context/adminContext";
 import React, { useEffect, useState } from "react";
-import Typography from "@mui/material/Typography";
 import { Alert, Grid, Button } from "@mui/material";
 
 import ListComponent from "../List";

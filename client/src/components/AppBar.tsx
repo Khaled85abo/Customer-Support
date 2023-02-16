@@ -6,34 +6,17 @@ import Toolbar from "@mui/material/Toolbar";
 import Container from "@mui/material/Container";
 import SupportPNG from "/support2.png";
 import { useStateContext } from "../context/stateContext";
+import { useNavigate } from "react-router-dom";
 
 function ResponsiveAppBar() {
   const {
     loginState: { role },
     logout,
   } = useStateContext();
-
-  useEffect(() => {}, [role]);
-  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
-    null
-  );
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
-    null
-  );
-
-  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElNav(event.currentTarget);
-  };
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElUser(event.currentTarget);
-  };
-
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
+  const navigate = useNavigate();
+  const signout = () => {
+    logout();
+    navigate("/");
   };
 
   return (
@@ -61,10 +44,7 @@ function ResponsiveAppBar() {
             <Box sx={{ textAlign: "right" }}>
               <Typography>Logged in as {role.toUpperCase()}</Typography>
 
-              <Button
-                sx={{ color: "white" }}
-                variant="text"
-                onClick={() => logout()}>
+              <Button sx={{ color: "white" }} variant="text" onClick={signout}>
                 Logout
               </Button>
             </Box>

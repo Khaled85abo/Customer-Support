@@ -123,7 +123,6 @@ export default function StateContextProvider({
   const logout = () => {
     dispatch({ type: "logOut" });
     axios.removeToken();
-    window.location.reload();
   };
   const values = {
     authorized,

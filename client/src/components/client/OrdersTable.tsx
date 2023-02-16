@@ -22,7 +22,7 @@ const OrdersTable = () => {
   };
   if (loading) {
     return (
-      <Typography variant="h4" color="text.primary" align="center">
+      <Typography variant="h5" color="text.primary" align="center">
         LOADING...
       </Typography>
     );
@@ -38,7 +38,7 @@ const OrdersTable = () => {
 
   return (
     <>
-      <Typography variant="h4" component="h1" align="center" mt={1} mb={1}>
+      <Typography variant="h5" component="h1" align="center" mt={1} mb={1}>
         Your orders
       </Typography>
       <table>
@@ -53,10 +53,10 @@ const OrdersTable = () => {
             orders.map((order: OrderType) => (
               <tr key={order._id}>
                 <td>
-                  <Typography variant="h5">
+                  <Typography variant="h6">
                     {order.isPaid ? "Paid" : "Not paid yet "}
                   </Typography>
-                  <Typography variant="h5">
+                  <Typography variant="h6">
                     {order.isDelivered ? "Delivered" : "Not devliered yet "}
                   </Typography>
 
