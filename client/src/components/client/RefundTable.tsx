@@ -58,7 +58,7 @@ const RefundsTable = () => {
 
   return (
     <>
-      <Typography variant="h4" component="h1" align="center" mt={1} mb={1}>
+      <Typography variant="h5" component="h1" align="center" mt={1} mb={1}>
         Your refunds
       </Typography>
       <table>

@@ -18,7 +18,7 @@ const OrderItemsTable = ({ orderItems }: { orderItems: OrderItemType[] }) => {
               <td>
                 <img
                   height="60"
-                  src={`https://customer-server-m4xg.onrender.com/${orderItem.image}?w=164&h=164&fit=crop&auto=format`}
+                  src={`https://customer-support.onrender.com/${orderItem.image}?w=164&h=164&fit=crop&auto=format`}
                   alt={orderItem.name}
                   loading="lazy"
                 />
