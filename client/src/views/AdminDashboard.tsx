@@ -5,7 +5,6 @@ import AddAgent from "../components/admin/AddAgent";
 import EditAgent from "../components/admin/EditAgent";
 import RemoveAgent from "../components/admin/RemoveAgent";
 import { ADMINACTIONS } from "../constants/actions";
-// import Infobar from "../components/Snackbar";
 import { useAdminContext } from "../context/adminContext";
 import { AdminActionsType } from "../types/actions";
 
@@ -19,7 +18,6 @@ const AdminDashboard = () => {
   }, []);
   return (
     <div>
-      {/* {resMessage.variant != null && <Infobar resMsg={resMessage} />} */}
       <nav>
         <Grid
           container
@@ -55,10 +53,6 @@ const AdminDashboard = () => {
       </nav>
       <Box
         sx={{
-          // display: "flex",
-          // flexDirection: "column",
-          // justifyContent: "center",
-          // alignItems: "center",
           textAlign: "center",
           margin: " 2rem auto 0 auto",
           maxWidth: "500px",

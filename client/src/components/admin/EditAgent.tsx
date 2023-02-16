@@ -2,7 +2,7 @@ import { useAdminContext } from "../../context/adminContext";
 import { useEffect, useState } from "react";
 import { AgentType, ResMsgVariantsType } from "../../types";
 import ListComponent from "../List";
-import { Button, Grid, Box, TextField, Typography, Alert } from "@mui/material";
+import { Button, Box, TextField, Typography, Alert } from "@mui/material";
 import * as axios from "../../axios";
 import { RESMSGVAIRANTS } from "../../constants/responseVariants";
 

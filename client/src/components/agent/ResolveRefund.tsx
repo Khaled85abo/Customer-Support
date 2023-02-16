@@ -1,5 +1,5 @@
-import { useState, ReactNode } from "react";
-import { Typography, Alert, Button, Box, Grid } from "@mui/material";
+import { useState } from "react";
+import { Typography, Button, Box, Grid } from "@mui/material";
 import OrderItemsTable from "../OrderItemsTable";
 import { REFUNDSTATUS } from "../../constants/refunds";
 import { RefundStatusType, RefundType } from "../../types/refund";
@@ -39,14 +39,14 @@ const ResolveRefund = () => {
 
   if (refunds.length == 0) {
     return (
-      <Typography variant="h4" component="h1" align="center" mt={1} mb={1}>
+      <Typography variant="h5" component="h2" align="center" mt={1} mb={1}>
         You don't have any refunds to resolve
       </Typography>
     );
   }
   return (
     <>
-      <Typography variant="h4" component="h1" align="center" mt={1} mb={1}>
+      <Typography variant="h5" component="h2" align="center" mt={1} mb={1}>
         Refund to resolve
       </Typography>
       <table>
