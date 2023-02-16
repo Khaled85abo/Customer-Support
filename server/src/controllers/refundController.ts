@@ -103,12 +103,14 @@ const getAgentRefund = async (req: Request, res: Response) => {
 const removeRefund = async (req: Request, res: Response) => {
   const refund = await Refund.findOne({ _id: req.params.id });
   if (!refund) throw new Error(ERRORS.not_found);
+
   /**Comment for testing purposes */
   // if (
   //   refund.status == REFUNDSTATUS.accepted ||
   //   refund.status == REFUNDSTATUS.declined
   // )
   //   throw new Error(ERRORS.forbidden);
+
   if (refund.agent)
     await Employee.updateOne({ _id: refund.agent }, { processing: null });
   await Refund.deleteOne({ _id: req.params.id });

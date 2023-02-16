@@ -1,5 +1,17 @@
 # Customer support center
 
+## Testing a deployed version
+
+```bash
+[Return center](https://customer-support-9frsrivay-khaled85abo.vercel.app/)
+```
+
+## Please note
+
+```bash
+for testing purposes the client can remove any refund
+```
+
 ## Installation / Locally
 
 clone the package to your device.
