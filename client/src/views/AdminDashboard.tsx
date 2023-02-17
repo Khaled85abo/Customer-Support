@@ -9,13 +9,10 @@ import { useAdminContext } from "../context/adminContext";
 import { AdminActionsType } from "../types/actions";
 
 const AdminDashboard = () => {
-  const { getSupportAgents, adminState } = useAdminContext();
+  const { adminState } = useAdminContext();
   const { resMessage } = adminState;
   const [action, setAction] = useState<AdminActionsType>(ADMINACTIONS.add);
 
-  useEffect(() => {
-    getSupportAgents();
-  }, []);
   return (
     <div>
       <nav>

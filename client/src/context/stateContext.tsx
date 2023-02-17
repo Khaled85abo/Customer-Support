@@ -7,6 +7,7 @@ import {
 } from "react";
 import * as axios from "../axios";
 import { saveToken } from "../axios";
+import { RolesType } from "../types/roles";
 type StateContextType = {
   authorized: boolean;
   login: (isClient: boolean, email: string, password: string) => void;
@@ -14,6 +15,11 @@ type StateContextType = {
   logout: () => void;
   setUiError: (error: string) => void;
   resetUiError: () => void;
+  rolesRes: {
+    roles: RolesType | {};
+    error: string;
+    loading: boolean;
+  };
 };
 interface LoginState {
   isLoading: boolean;
@@ -106,15 +112,32 @@ export default function StateContextProvider({
 }) {
   const [authorized, setAuthorized] = useState<boolean>(true);
   const [loginState, dispatch] = useReducer(loginReducer, initialState);
-  const [stateLogin, setStateLogin] = useState<{
-    error: string;
-    role: string | null;
-    loggedin: boolean;
-    loading: boolean;
-  }>({ error: "", role: null, loggedin: false, loading: false });
+  const [rolesRes, setRolesRes] = useState({
+    loading: false,
+    error: "",
+    roles: {},
+  });
+  // const [stateLogin, setStateLogin] = useState<{
+  //   error: string;
+  //   role: string | null;
+  //   loggedin: boolean;
+  //   loading: boolean;
+  // }>({ error: "", role: null, loggedin: false, loading: false });
+
+  const getRoes = async () => {
+    setRolesRes((prev) => ({ ...prev, loading: true }));
+    try {
+      const res = await axios.getRoles();
+      setRolesRes((prev) => ({ ...prev, roles: res.data.roles, error: "" }));
+    } catch (error: any) {
+      setRolesRes((prev) => ({ ...prev, error: error.response.data.error }));
+    } finally {
+      setRolesRes((prev) => ({ ...prev, loading: false }));
+    }
+  };
   const login = async (isClient: boolean, email: string, password: string) => {
     dispatch({ type: SOLOACTIONS.login });
-    setStateLogin((prev) => ({ ...prev, loading: true }));
+    // setStateLogin((prev) => ({ ...prev, loading: true }));
     try {
       let res: { data: { token: string; role: string } };
       if (isClient) {
@@ -122,16 +145,16 @@ export default function StateContextProvider({
       } else {
         res = await axios.loginEmployee({ email, password });
       }
-
+      getRoes();
       saveToken(res.data.token);
       dispatch({ type: PAYLOADACTIONS.success, payload: res.data.role });
-      setStateLogin((prev) => ({ ...prev, role: res.data.role }));
+      // setStateLogin((prev) => ({ ...prev, role: res.data.role }));
     } catch (error: any) {
-      setStateLogin((prev) => ({
-        ...prev,
-        error: error.response.data.error,
-        loading: false,
-      }));
+      // setStateLogin((prev) => ({
+      //   ...prev,
+      //   error: error.response.data.error,
+      //   loading: false,
+      // }));
       dispatch({
         type: PAYLOADACTIONS.error,
         payload: error.response.data.error,
@@ -157,6 +180,7 @@ export default function StateContextProvider({
     logout,
     setUiError,
     resetUiError,
+    rolesRes,
   };
 
   return (

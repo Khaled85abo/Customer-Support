@@ -7,10 +7,11 @@ import {
 } from "react";
 import * as axios from "../axios";
 import { RESMSGVAIRANTS } from "../constants/responseVariants";
+import { ROLES } from "../constants/roles";
 import { AgentDto, AgentType, ResMsgVariantsType } from "../types";
+import { useStateContext } from "./stateContext";
 
 type AdminContextType = {
-  getSupportAgents: () => void;
   setResMessage: (variant: ResMsgVariantsType, message: string) => void;
   resetResMsg: () => void;
   adminState: AdminStateType;
@@ -41,6 +42,9 @@ export default function AdminContextProvider({
 }: {
   children: ReactNode;
 }) {
+  const {
+    loginState: { role },
+  } = useStateContext();
   const [adminState, setAdminState] = useState<AdminStateType>({
     agents: [],
     roles: [],
@@ -98,9 +102,12 @@ export default function AdminContextProvider({
     }));
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    if (role == ROLES.admin) {
+      getSupportAgents();
+    }
+  }, []);
   const values = {
-    getSupportAgents,
     setResMessage,
     resetResMsg,
     adminState,

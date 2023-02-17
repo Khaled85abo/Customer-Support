@@ -9,7 +9,7 @@ import { useAgentContext } from "../../context/agentContext";
 
 const ResolveRefund = () => {
   const {
-    myRefunds: { refunds },
+    myRefunds: { refunds, loading },
     getMyRefunds,
     getRefunds,
   } = useAgentContext();
@@ -37,6 +37,13 @@ const ResolveRefund = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <Typography variant="h5" component="h2" align="center" mt={1} mb={1}>
+        Loading...
+      </Typography>
+    );
+  }
   if (refunds.length == 0) {
     return (
       <Typography variant="h5" component="h2" align="center" mt={1} mb={1}>
