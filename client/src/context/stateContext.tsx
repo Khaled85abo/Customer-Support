@@ -7,7 +7,18 @@ import {
 } from "react";
 import * as axios from "../axios";
 import { saveToken } from "../axios";
+import { RESMSGVAIRANTS } from "../constants/responseVariants";
+import { ResMsgVariantsType } from "../types";
 import { RolesType } from "../types/roles";
+
+type ShowSnackbarType = {
+  message: string;
+  action: null | (() => void);
+  actionMessage: string;
+  severity: ResMsgVariantsType;
+  show: boolean;
+  timing: number;
+};
 type StateContextType = {
   authorized: boolean;
   login: (isClient: boolean, email: string, password: string) => void;
@@ -20,6 +31,9 @@ type StateContextType = {
     error: string;
     loading: boolean;
   };
+  showSnackbar: ShowSnackbarType;
+  showSnackbarMessage: (severity: ResMsgVariantsType, message: string) => void;
+  resetShowSnackbar: () => void;
 };
 interface LoginState {
   isLoading: boolean;
@@ -117,12 +131,16 @@ export default function StateContextProvider({
     error: "",
     roles: {},
   });
-  // const [stateLogin, setStateLogin] = useState<{
-  //   error: string;
-  //   role: string | null;
-  //   loggedin: boolean;
-  //   loading: boolean;
-  // }>({ error: "", role: null, loggedin: false, loading: false });
+  const defautSnackbar = {
+    message: "",
+    severity: RESMSGVAIRANTS.info,
+    actionMessage: "",
+    action: null,
+    show: false,
+    timing: 4000,
+  };
+  const [showSnackbar, setShowSnackbar] =
+    useState<ShowSnackbarType>(defautSnackbar);
 
   const getRoes = async () => {
     setRolesRes((prev) => ({ ...prev, loading: true }));
@@ -137,7 +155,6 @@ export default function StateContextProvider({
   };
   const login = async (isClient: boolean, email: string, password: string) => {
     dispatch({ type: SOLOACTIONS.login });
-    // setStateLogin((prev) => ({ ...prev, loading: true }));
     try {
       let res: { data: { token: string; role: string } };
       if (isClient) {
@@ -148,13 +165,7 @@ export default function StateContextProvider({
       getRoes();
       saveToken(res.data.token);
       dispatch({ type: PAYLOADACTIONS.success, payload: res.data.role });
-      // setStateLogin((prev) => ({ ...prev, role: res.data.role }));
     } catch (error: any) {
-      // setStateLogin((prev) => ({
-      //   ...prev,
-      //   error: error.response.data.error,
-      //   loading: false,
-      // }));
       dispatch({
         type: PAYLOADACTIONS.error,
         payload: error.response.data.error,
@@ -167,6 +178,15 @@ export default function StateContextProvider({
   };
   const resetUiError = () => {
     dispatch({ type: SOLOACTIONS.resetError });
+  };
+  const resetShowSnackbar = () => {
+    setShowSnackbar((prev) => defautSnackbar);
+  };
+  const showSnackbarMessage = (
+    severity: ResMsgVariantsType,
+    message: string
+  ) => {
+    setShowSnackbar((prev) => ({ ...prev, show: true, severity, message }));
   };
 
   const logout = () => {
@@ -181,6 +201,9 @@ export default function StateContextProvider({
     setUiError,
     resetUiError,
     rolesRes,
+    showSnackbar,
+    showSnackbarMessage,
+    resetShowSnackbar,
   };
 
   return (

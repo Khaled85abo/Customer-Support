@@ -13,8 +13,6 @@ import { useStateContext } from "./stateContext";
 
 type AdminContextType = {
   getSupportAgents: () => void;
-  setResMessage: (variant: ResMsgVariantsType, message: string) => void;
-  resetResMsg: () => void;
   adminState: AdminStateType;
   addAgent: (agent: AgentDto) => void;
   removeAgent: (id: string) => void;
@@ -24,7 +22,8 @@ type AdminContextType = {
 export type AdminStateType = {
   agents: AgentType[];
   roles: [];
-  resMessage: { variant: ResMsgVariantsType | null; message: string };
+  error: string;
+  loading: boolean;
 };
 const AdminContext = createContext<AdminContextType | null>(null);
 
@@ -45,62 +44,77 @@ export default function AdminContextProvider({
 }) {
   const {
     loginState: { role },
+    showSnackbarMessage,
   } = useStateContext();
   const [adminState, setAdminState] = useState<AdminStateType>({
     agents: [],
     roles: [],
-    resMessage: { variant: null, message: "" },
+    error: "",
+    loading: false,
   });
-  const [resMsg, setResMsg] = useState<{
-    type: ResMsgVariantsType;
-    message: string;
-  } | null>(null);
 
   const getSupportAgents = async () => {
+    setAdminState((prev) => ({ ...prev, loading: true }));
     try {
       const res = await axios.getSupportAgents();
       setAdminState((prev) => ({ ...prev, agents: res.data.users }));
     } catch (error: any) {
       setAdminState((prev) => ({
         ...prev,
-        resMessage: {
-          variant: RESMSGVAIRANTS.error,
-          message: error.response.data.error,
-        },
+        error: error.response.data.error,
       }));
+      showSnackbarMessage(
+        RESMSGVAIRANTS.error,
+        `Something went wrong! ${error.response.body.error}`
+      );
+    } finally {
+      setAdminState((prev) => ({ ...prev, loading: false }));
     }
   };
 
   const addAgent = async (agent: AgentDto) => {
     try {
       const res = await axios.addAgent(agent);
+      showSnackbarMessage(RESMSGVAIRANTS.success, res.data.message);
       getSupportAgents();
-    } catch (error) {}
+    } catch (error: any) {
+      showSnackbarMessage(
+        RESMSGVAIRANTS.error,
+        `Something went wrong! ${error.response.body.error}`
+      );
+    }
   };
 
   const removeAgent = async (id: string) => {
     try {
       const res = await axios.deleteAgent(id);
+      showSnackbarMessage(
+        RESMSGVAIRANTS.success,
+        "User has been deleted successfuly "
+      );
       getSupportAgents();
-    } catch (error) {}
+    } catch (error: any) {
+      showSnackbarMessage(
+        RESMSGVAIRANTS.error,
+        `Something went wrong! ${error.response.body.error}`
+      );
+    }
   };
 
   const updateAgent = async (id: string, agent: AgentDto) => {
     try {
       const res = await axios.updateAgent(id, agent);
-    } catch (error: any) {}
-  };
-  const setResMessage = (variant: ResMsgVariantsType, message: string) => {
-    setAdminState((prev) => ({
-      ...prev,
-      resMessage: { variant, message },
-    }));
-  };
-  const resetResMsg = () => {
-    setAdminState((prev) => ({
-      ...prev,
-      resMessage: { variant: null, message: "" },
-    }));
+      showSnackbarMessage(
+        RESMSGVAIRANTS.success,
+        "User has been updated successfuly "
+      );
+      getSupportAgents();
+    } catch (error: any) {
+      showSnackbarMessage(
+        RESMSGVAIRANTS.error,
+        `Something went wrong! ${error.response.body.error}`
+      );
+    }
   };
 
   useEffect(() => {
@@ -110,8 +124,7 @@ export default function AdminContextProvider({
   }, []);
   const values = {
     getSupportAgents,
-    setResMessage,
-    resetResMsg,
+
     adminState,
     addAgent,
     removeAgent,

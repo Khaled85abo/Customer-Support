@@ -6,28 +6,6 @@ import { useAgentContext } from "../context/agentContext";
 const AgentDashboard = () => {
   return (
     <Stack spacing={2}>
-      <Box sx={{ textAlign: "center" }}>
-        <Link to="/support-agent/refunds">
-          <Typography component="span" marginRight={2}>
-            Refunds
-          </Typography>
-        </Link>
-        <Link to="/support-agent/resolve">
-          <Typography component="span" marginRight={2}>
-            Resolve
-          </Typography>
-        </Link>
-        <Link to="/client">
-          <Typography component="span" marginRight={2}>
-            Client
-          </Typography>
-        </Link>
-        <Link to="/admin">
-          <Typography component="span" marginRight={2}>
-            Admin
-          </Typography>
-        </Link>
-      </Box>
       <ResolveRefund />
       <AssignRefund />
       <Outlet />

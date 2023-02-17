@@ -7,7 +7,7 @@ import * as axios from "../../axios";
 import { RESMSGVAIRANTS } from "../../constants/responseVariants";
 
 const EditAgent = () => {
-  const { adminState, getSupportAgents } = useAdminContext();
+  const { adminState, getSupportAgents, updateAgent } = useAdminContext();
   const { agents } = adminState;
   const [agentToEdit, setAgentToEdit] = useState<AgentType | null>(null);
   const [name, setName] = useState("");
@@ -24,6 +24,7 @@ const EditAgent = () => {
 
   const handleUpdateAgent = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!agentToEdit) return;
     if (name.length == 0) {
       setResMsg({
         message: "User name Can't be empty",
@@ -31,28 +32,26 @@ const EditAgent = () => {
       });
       return;
     }
-    try {
-      const res = await axios.updateAgent(agentToEdit?._id!, { name });
+    if (name == agentToEdit.name) {
       setResMsg({
-        message: res.data.message,
-        type: RESMSGVAIRANTS.success,
-      });
-      getSupportAgents();
-      setName("");
-      setAgentToEdit(null);
-    } catch (error: any) {
-      setResMsg({
-        message: error.response.data.error,
+        message: "The name is exactly the same!",
         type: RESMSGVAIRANTS.error,
       });
+      return;
     }
+    if (!agentToEdit) return;
+    updateAgent(agentToEdit._id, { name });
+    setAgentToEdit(null);
   };
 
   useEffect(() => {
-    setTimeout(() => {
+    const setTimeoutID = setTimeout(() => {
       setResMsg(null);
+      console.log("remove error message");
     }, 5000);
-  }, [agents]);
+
+    return () => clearTimeout(setTimeoutID);
+  }, [agents, resMsg?.message]);
 
   return (
     <>

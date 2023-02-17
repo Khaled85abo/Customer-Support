@@ -10,7 +10,6 @@ import { AdminActionsType } from "../types/actions";
 
 const AdminDashboard = () => {
   const { adminState } = useAdminContext();
-  const { resMessage } = adminState;
   const [action, setAction] = useState<AdminActionsType>(ADMINACTIONS.add);
 
   return (

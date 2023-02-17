@@ -17,6 +17,7 @@ import AdminContextProvider from "./context/adminContext";
 import ClientContextProvider from "./context/clientContext";
 import { Box } from "@mui/material";
 import AgentContextProvider, { useAgentContext } from "./context/agentContext";
+import SnackbarInfo from "./components/Snackbar";
 
 const ProtectedRoutes = () => {
   const location = useLocation();
@@ -83,10 +84,20 @@ const NoMatch = () => {
   return <h2>No matching route</h2>;
 };
 function App() {
+  const {
+    showSnackbar: { message, show, severity },
+    resetShowSnackbar,
+  } = useStateContext();
   return (
     <div className="App">
       <ResponsiveAppBar />
-
+      {show && (
+        <SnackbarInfo
+          close={resetShowSnackbar}
+          message={message}
+          severity={severity}
+        />
+      )}
       <Box
         sx={{
           maxWidth: 800,
