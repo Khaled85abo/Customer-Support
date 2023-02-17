@@ -12,6 +12,7 @@ import { AgentDto, AgentType, ResMsgVariantsType } from "../types";
 import { useStateContext } from "./stateContext";
 
 type AdminContextType = {
+  getSupportAgents: () => void;
   setResMessage: (variant: ResMsgVariantsType, message: string) => void;
   resetResMsg: () => void;
   adminState: AdminStateType;
@@ -108,6 +109,7 @@ export default function AdminContextProvider({
     }
   }, []);
   const values = {
+    getSupportAgents,
     setResMessage,
     resetResMsg,
     adminState,
