@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { CLIENTROLES } from "../constants/client";
 import { ERRORS } from "../constants/errors";
 import Order from "../models/order.model";
+import Refund from "../models/refund.model";
 import createToken from "../utils/createToken";
 
 // @desc    Get order by ID
@@ -28,7 +29,9 @@ const getMyOrders = async (req: Request, res: Response) => {
 // @route   GET /api/orders/authenticate/:id
 // @access  public
 const authenticateByOrder = async (req: Request, res: Response) => {
+  //Send orders refunds
   const order = await Order.findOne({ _id: req.params.id });
+  const refunds = await Refund.find({ order: req.params.id });
   const token = createToken({
     email: null,
     name: null,
@@ -39,6 +42,7 @@ const authenticateByOrder = async (req: Request, res: Response) => {
     throw new Error(ERRORS.not_found);
   }
   res.json({
+    refunds,
     order: {
       _id: order._id,
       orderItems: order.orderItems,

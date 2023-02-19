@@ -152,11 +152,11 @@ const activateAccount = async (req: Request, res: Response) => {
   res.send({ user: agent });
 };
 
-// @desc    Get all employee roles
+// @desc    Get both employee and clients roles
 // @route   get /api/users/roles
 // @access  private/ admin
-const getEmployeeRoles = (req: Request, res: Response) => {
-  res.send({ ROLES });
+const getRoles = (req: Request, res: Response) => {
+  res.send({ roles: { ...ROLES, ...CLIENTROLES } });
 };
 
 export {
@@ -167,6 +167,6 @@ export {
   getSupportAgentsById,
   updateSupportAgent,
   deleteSupportAgent,
-  getEmployeeRoles,
+  getRoles,
   activateAccount,
 };

@@ -2,7 +2,14 @@ import axios from "axios";
 import { AgentDto, CredentialsType } from "../types";
 import { RefundDtoType, RefundStatusType } from "../types/refund";
 
-axios.defaults.baseURL = "https://customer-support.onrender.com/api";
+export let SERVER_URL = "https://customer-support.onrender.com/";
+
+if (import.meta.env.DEV) {
+  console.log("local host working");
+  SERVER_URL = "http://localhost:3030/";
+}
+
+axios.defaults.baseURL = `${SERVER_URL}api`;
 
 export function saveToken(token: string) {
   axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;

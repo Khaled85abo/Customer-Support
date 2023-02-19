@@ -84,7 +84,7 @@ export default function RefundsCheckList({
                 <ListItemAvatar>
                   <Avatar
                     alt={`${orderItem.name}`}
-                    src={`https://customer-support.onrender.com/${orderItem.image}`}
+                    src={`${axios.SERVER_URL}${orderItem.image}`}
                   />
                 </ListItemAvatar>
                 <ListItemText id={labelId} primary={`Line item ${index}`} />

@@ -1,10 +1,7 @@
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText from "@mui/material/ListItemText";
-import ListItemAvatar from "@mui/material/ListItemAvatar";
-import Avatar from "@mui/material/Avatar";
-import { Button, Typography } from "@mui/material";
+import { Button, Typography, Box } from "@mui/material";
 import { AgentType } from "../types";
 
 type ListType = {
@@ -20,13 +17,14 @@ const ListComponent = ({ agents, action }: ListType) => {
       dense
       sx={{
         width: "100%",
-        maxWidth: 360,
+        maxWidth: 500,
         bgcolor: "background.paper",
         margin: "auto",
+        padding: 1,
       }}>
       {agents.map((agent, index) => (
         <ListItem
-          sx={{ padding: 1 }}
+          sx={{ padding: 1, borderBottom: "1px solid gray", marginTop: 2 }}
           key={index}
           secondaryAction={
             <Button
@@ -37,12 +35,10 @@ const ListComponent = ({ agents, action }: ListType) => {
             </Button>
           }
           disablePadding>
-          <ListItemButton>
-            <Typography variant="body2" sx={{ mr: 2 }}>
-              {agent.name}
-            </Typography>
-            <Typography variant="body2">{agent.email}</Typography>
-          </ListItemButton>
+          <Box sx={{ marginRight: "5rem" }}>
+            <Typography variant="body1">{agent.name}</Typography>
+            <Typography variant="overline">{agent.email}</Typography>
+          </Box>
         </ListItem>
       ))}
     </List>

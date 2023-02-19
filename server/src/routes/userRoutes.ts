@@ -7,7 +7,7 @@ import {
   deleteSupportAgent,
   getAllSupportAgents,
   getSupportAgentsById,
-  getEmployeeRoles,
+  getRoles,
   updateSupportAgent,
 } from "../controllers/userController";
 import { validToken, isAdmin, isAgent } from "../middleware/auth";
@@ -20,7 +20,7 @@ router
   .post(validToken, isAdmin, createSupportAgent)
   .get(validToken, isAdmin, getAllSupportAgents);
 
-router.get("/roles", validToken, isAdmin, getEmployeeRoles);
+router.get("/roles", getRoles);
 
 // Login  client
 router.post("/auth", authenticateClient);

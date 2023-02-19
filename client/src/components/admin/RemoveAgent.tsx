@@ -5,6 +5,8 @@ import { Alert, Grid, Button } from "@mui/material";
 import ListComponent from "../List";
 import { AgentType } from "../../types";
 import BasicModal from "../Modal";
+import { useStateContext } from "../../context/stateContext";
+import { RESMSGVAIRANTS } from "../../constants/responseVariants";
 
 const RemoveAgent = () => {
   const { adminState, removeAgent } = useAdminContext();
