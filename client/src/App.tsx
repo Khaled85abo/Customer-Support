@@ -2,9 +2,9 @@ import {
   Routes,
   Route,
   useLocation,
-  useNavigate,
   Outlet,
   Navigate,
+  NavLink,
 } from "react-router-dom";
 import Login from "./views/Login";
 import ClientDashboard from "./views/ClientDashboard";
@@ -25,16 +25,15 @@ const ProtectedRoutes = () => {
     loginState: { role },
   } = useStateContext();
 
-  useEffect(() => {
-    console.log("protected routes: ", location.pathname, role);
-  }, [location.pathname]);
-  return role && location.pathname.toLowerCase().includes(role) ? (
-    <Outlet />
-  ) : role && !location.pathname.toLowerCase().includes(role) ? (
-    <Navigate to={`/${role}`} />
-  ) : (
-    <Navigate to="/login" />
-  );
+  useEffect(() => {}, [location.pathname]);
+
+  if (role) {
+    if (location.pathname.toLowerCase().includes(role)) {
+      return <Outlet />;
+    }
+    return <Navigate to={`/${role}`} />;
+  }
+  return <Navigate to="/" />;
 };
 
 const AgentRoutes = () => {
@@ -66,20 +65,7 @@ const AdminRoutes = () => {
     </>
   );
 };
-const Resolve = () => {
-  const {
-    myRefunds: { refunds },
-  } = useAgentContext();
-  return (
-    <div>
-      <h2>Resolve a refund</h2>
-      {JSON.stringify(refunds, null, 2)}
-    </div>
-  );
-};
-const Refunds = () => {
-  return <h2>All refunds</h2>;
-};
+
 const NoMatch = () => {
   return <h2>No matching route</h2>;
 };
@@ -105,27 +91,19 @@ function App() {
           overflow: { xs: "scroll", md: "hidden" },
         }}>
         <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/" element={<ProtectedRoutes />}>
-            <Route path="/support-agent" element={<AgentRoutes />}>
-              <Route path="/support-agent" element={<AgentDashboard />}>
-                <Route
-                  index
-                  path="/support-agent/refunds"
-                  element={<Refunds />}
-                />
-                <Route path="/support-agent/refunds" element={<Refunds />} />
-                <Route path="/support-agent/resolve" element={<Resolve />} />
-                <Route path="/support-agent/*" element={<NoMatch />} />
-              </Route>
+          <Route path="/" element={<Login />} />
+          <Route element={<ProtectedRoutes />}>
+            <Route path="support-agent" element={<AgentRoutes />}>
+              <Route index element={<AgentDashboard />} />
+              <Route path="*" element={<NoMatch />} />
             </Route>
-            <Route path="/client" element={<ClientRoutes />}>
-              <Route path="/client" element={<ClientDashboard />} />
-              <Route path="/client/*" element={<NoMatch />} />
+            <Route path="client" element={<ClientRoutes />}>
+              <Route index element={<ClientDashboard />} />
+              <Route path="*" element={<NoMatch />} />
             </Route>
-            <Route path="/admin" element={<AdminRoutes />}>
-              <Route path="/admin" element={<AdminDashboard />} />
-              <Route path="/admin/*" element={<NoMatch />} />
+            <Route path="admin" element={<AdminRoutes />}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="*" element={<NoMatch />} />
             </Route>
           </Route>
           <Route path="*" element={<NoMatch />} />

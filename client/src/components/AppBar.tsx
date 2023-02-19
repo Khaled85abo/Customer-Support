@@ -16,7 +16,7 @@ function ResponsiveAppBar() {
   const navigate = useNavigate();
   const signout = () => {
     logout();
-    navigate("/login");
+    navigate("/");
   };
 
   return (
