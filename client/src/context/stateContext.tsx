@@ -7,6 +7,18 @@ import {
 } from "react";
 import * as axios from "../axios";
 import { saveToken } from "../axios";
+import { RESMSGVAIRANTS } from "../constants/responseVariants";
+import { ResMsgVariantsType } from "../types";
+import { RolesType } from "../types/roles";
+
+type ShowSnackbarType = {
+  message: string;
+  action: null | (() => void);
+  actionMessage: string;
+  severity: ResMsgVariantsType;
+  show: boolean;
+  timing: number;
+};
 type StateContextType = {
   authorized: boolean;
   login: (isClient: boolean, email: string, password: string) => void;
@@ -14,6 +26,14 @@ type StateContextType = {
   logout: () => void;
   setUiError: (error: string) => void;
   resetUiError: () => void;
+  rolesRes: {
+    roles: RolesType | {};
+    error: string;
+    loading: boolean;
+  };
+  showSnackbar: ShowSnackbarType;
+  showSnackbarMessage: (severity: ResMsgVariantsType, message: string) => void;
+  resetShowSnackbar: () => void;
 };
 interface LoginState {
   isLoading: boolean;
@@ -40,20 +60,32 @@ const initialState: LoginState = {
   isLoggedIn: false,
 };
 
+const PAYLOADACTIONS = {
+  error: "error",
+  success: "success",
+} as const;
+const SOLOACTIONS = {
+  login: "login",
+  logOut: "logOut",
+  resetError: "resetError",
+} as const;
+type PayloadActionsType = typeof PAYLOADACTIONS[keyof typeof PAYLOADACTIONS];
+type soloActionsType = typeof SOLOACTIONS[keyof typeof SOLOACTIONS];
+
 type LoginAction =
-  | { type: "login" | "logOut" | "resetError" }
-  | { type: "error" | "success"; payload: string };
+  | { type: soloActionsType }
+  | { type: PayloadActionsType; payload: string };
 
 function loginReducer(state: LoginState, action: LoginAction): LoginState {
   switch (action.type) {
-    case "login": {
+    case SOLOACTIONS.login: {
       return {
         ...state,
         error: "",
         isLoading: true,
       };
     }
-    case "success": {
+    case PAYLOADACTIONS.success: {
       return {
         ...state,
         role: action.payload,
@@ -61,7 +93,7 @@ function loginReducer(state: LoginState, action: LoginAction): LoginState {
         isLoading: false,
       };
     }
-    case "error": {
+    case PAYLOADACTIONS.error: {
       return {
         ...state,
         error: action.payload,
@@ -69,14 +101,14 @@ function loginReducer(state: LoginState, action: LoginAction): LoginState {
         isLoading: false,
       };
     }
-    case "logOut": {
+    case SOLOACTIONS.logOut: {
       return {
         ...state,
         role: null,
         isLoggedIn: false,
       };
     }
-    case "resetError": {
+    case SOLOACTIONS.resetError: {
       return {
         ...state,
         error: "",
@@ -94,34 +126,71 @@ export default function StateContextProvider({
 }) {
   const [authorized, setAuthorized] = useState<boolean>(true);
   const [loginState, dispatch] = useReducer(loginReducer, initialState);
+  const [rolesRes, setRolesRes] = useState({
+    loading: false,
+    error: "",
+    roles: {},
+  });
+  const defautSnackbar = {
+    message: "",
+    severity: RESMSGVAIRANTS.info,
+    actionMessage: "",
+    action: null,
+    show: false,
+    timing: 4000,
+  };
+  const [showSnackbar, setShowSnackbar] =
+    useState<ShowSnackbarType>(defautSnackbar);
 
-  const login = async (isClient: boolean, email: string, password: string) => {
-    dispatch({ type: "login" });
-
+  const getRoes = async () => {
+    setRolesRes((prev) => ({ ...prev, loading: true }));
     try {
-      let res;
+      const res = await axios.getRoles();
+      setRolesRes((prev) => ({ ...prev, roles: res.data.roles, error: "" }));
+    } catch (error: any) {
+      setRolesRes((prev) => ({ ...prev, error: error.response.data.error }));
+    } finally {
+      setRolesRes((prev) => ({ ...prev, loading: false }));
+    }
+  };
+  const login = async (isClient: boolean, email: string, password: string) => {
+    dispatch({ type: SOLOACTIONS.login });
+    try {
+      let res: { data: { token: string; role: string } };
       if (isClient) {
         res = await axios.loginClient({ email, password });
       } else {
         res = await axios.loginEmployee({ email, password });
       }
-
+      getRoes();
       saveToken(res.data.token);
-      dispatch({ type: "success", payload: res.data.role });
+      dispatch({ type: PAYLOADACTIONS.success, payload: res.data.role });
     } catch (error: any) {
-      dispatch({ type: "error", payload: error.response.data.error });
+      dispatch({
+        type: PAYLOADACTIONS.error,
+        payload: error.response.data.error,
+      });
     }
   };
 
   const setUiError = (error: string) => {
-    dispatch({ type: "error", payload: error });
+    dispatch({ type: PAYLOADACTIONS.error, payload: error });
   };
   const resetUiError = () => {
-    dispatch({ type: "resetError" });
+    dispatch({ type: SOLOACTIONS.resetError });
+  };
+  const resetShowSnackbar = () => {
+    setShowSnackbar((prev) => defautSnackbar);
+  };
+  const showSnackbarMessage = (
+    severity: ResMsgVariantsType,
+    message: string
+  ) => {
+    setShowSnackbar((prev) => ({ ...prev, show: true, severity, message }));
   };
 
   const logout = () => {
-    dispatch({ type: "logOut" });
+    dispatch({ type: SOLOACTIONS.logOut });
     axios.removeToken();
   };
   const values = {
@@ -131,6 +200,10 @@ export default function StateContextProvider({
     logout,
     setUiError,
     resetUiError,
+    rolesRes,
+    showSnackbar,
+    showSnackbarMessage,
+    resetShowSnackbar,
   };
 
   return (

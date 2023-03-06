@@ -6,7 +6,9 @@ import {
   ReactNode,
 } from "react";
 import * as axios from "../axios";
+import { ROLES } from "../constants/roles";
 import { RefundsStateType } from "./clientContext";
+import { useStateContext } from "./stateContext";
 
 type AgentContextType = {
   refunds: RefundsStateType;
@@ -32,6 +34,10 @@ export default function AgentContextProvider({
 }: {
   children: ReactNode;
 }) {
+  const {
+    loginState: { role },
+    rolesRes: { roles },
+  } = useStateContext();
   const [refunds, setRefunds] = useState<RefundsStateType>({
     loading: false,
     error: "",
@@ -69,8 +75,10 @@ export default function AgentContextProvider({
   };
 
   useEffect(() => {
-    getRefunds();
-    getMyRefunds();
+    if (role == ROLES.support_agent) {
+      getRefunds();
+      getMyRefunds();
+    }
   }, []);
 
   const values = {
