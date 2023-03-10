@@ -69,8 +69,12 @@ const SOLOACTIONS = {
   logOut: "logOut",
   resetError: "resetError",
 } as const;
-type PayloadActionsType = typeof PAYLOADACTIONS[keyof typeof PAYLOADACTIONS];
-type soloActionsType = typeof SOLOACTIONS[keyof typeof SOLOACTIONS];
+type ObjectValues<T> = T[keyof T];
+
+type PayloadActionsType = ObjectValues<typeof PAYLOADACTIONS>;
+type soloActionsType = ObjectValues<typeof SOLOACTIONS>;
+// type PayloadActionsType = typeof PAYLOADACTIONS[keyof typeof PAYLOADACTIONS];
+// type soloActionsType = typeof SOLOACTIONS[keyof typeof SOLOACTIONS];
 
 type LoginAction =
   | { type: soloActionsType }

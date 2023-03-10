@@ -4,6 +4,9 @@ import * as axios from "../../axios";
 import { useState } from "react";
 import { newAgentType, ResMsgVariantsType } from "../../types";
 import { RESMSGVAIRANTS } from "../../constants/responseVariants";
+import validate from "../../customHooks/validations";
+import { VALIDATIONS } from "../../constants/validations";
+import useValidation from "../../customHooks/validations";
 const AddAgent = () => {
   const { getSupportAgents } = useAdminContext();
   const [resMsg, setResMsg] = useState<{
@@ -14,6 +17,10 @@ const AddAgent = () => {
     name: "",
     email: "",
     password: "",
+  });
+  const [emailError, emailInfo] = useValidation({
+    input: newAgent.name,
+    validation: VALIDATIONS.email,
   });
 
   const updateFileds = (fields: Partial<newAgentType>) => {
@@ -71,6 +78,7 @@ const AddAgent = () => {
         />
 
         <TextField
+          error={emailError ? true : false}
           margin="normal"
           required
           fullWidth
@@ -81,7 +89,7 @@ const AddAgent = () => {
           value={newAgent.email}
           onChange={(e) => updateFileds({ email: e.target.value })}
         />
-
+        {emailError && <Alert severity="error">{emailError}</Alert>}
         <TextField
           margin="normal"
           required
