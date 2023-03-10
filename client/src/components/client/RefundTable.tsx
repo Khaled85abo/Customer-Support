@@ -6,6 +6,10 @@ import OrderItemsTable from "../OrderItemsTable";
 import { REFUNDSTATUS } from "../../constants/refunds";
 import BasicModal from "../Modal";
 import * as axios from "../../axios";
+import NoData from "../NoData";
+import ErrorDisplayData from "../ErrorDisplayData";
+import Loading from "../Loading";
+import FetchingDataWrapper from "../FetchingDataWrapper";
 const RefundsTable = () => {
   const {
     refunds: { refunds, error, loading },
@@ -33,94 +37,78 @@ const RefundsTable = () => {
       setResError(error.response.body.error);
     }
   };
-  if (loading) {
-    return (
-      <Typography variant="h5" color="text.primary" align="center">
-        LOADING...
-      </Typography>
-    );
-  }
-  if (error) {
-    return (
-      <Alert sx={{ mt: 3 }} severity="error">
-        {error}
-      </Alert>
-    );
-  }
-
-  if (refunds.length == 0) {
-    return (
-      <Typography variant="h5" component="h1" align="center" mt={1} mb={1}>
-        You don't have any refunds
-      </Typography>
-    );
-  }
 
   return (
     <>
-      <Typography variant="h5" component="h1" align="center" mt={1} mb={1}>
-        Your refunds
+      <Typography component="h1" variant="h5" align="center" mt={1} mb={1}>
+        Your refunds history
       </Typography>
-      <table>
-        <thead>
-          <tr>
-            <th>refund info</th>
-            <th>refund items info</th>
-          </tr>
-        </thead>
-        <tbody>
-          {refunds.length > 0 &&
-            refunds.map((refund: RefundType) => (
-              <tr key={refund._id}>
-                <td>
-                  <Typography variant="h6">{refund.status}</Typography>
-                  {/* Commented for testing purposes */}
-                  {/* {(refund.status === REFUNDSTATUS.processing ||
+      <FetchingDataWrapper
+        error={error}
+        loading={loading}
+        dataText="refunds"
+        dataArr={refunds}>
+        <table>
+          <thead>
+            <tr>
+              <th>refund info</th>
+              <th>refund items info</th>
+            </tr>
+          </thead>
+          <tbody>
+            {refunds.length > 0 &&
+              refunds.map((refund: RefundType) => (
+                <tr key={refund._id}>
+                  <td>
+                    <Typography variant="h6">{refund.status}</Typography>
+                    {/* Commented for testing purposes */}
+                    {/* {(refund.status === REFUNDSTATUS.processing ||
                     refund.status === REFUNDSTATUS.pending) && (
                     <Button onClick={() => setRefundId(refund._id)}>
                       Cancel Refund
                     </Button>
                   )} */}
-                  <Button onClick={() => setRefundId(refund._id)}>
-                    Cancel Refund
+                    <Button onClick={() => setRefundId(refund._id)}>
+                      Cancel Refund
+                    </Button>
+                  </td>
+                  <td>
+                    <OrderItemsTable orderItems={refund.orderItems} />
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+        {refundId && (
+          <BasicModal close={resetRefundId}>
+            <Stack sx={{ textAlign: "center" }}>
+              {resError && <Alert severity="error">{resError}</Alert>}
+              <Alert severity="error">
+                Are you sure you want to delete this refund request!
+              </Alert>
+              <Grid mt={1} container spacing={4}>
+                <Grid item xs={6}>
+                  <Button
+                    size="medium"
+                    variant="contained"
+                    onClick={resetRefundId}>
+                    Close
                   </Button>
-                </td>
-                <td>
-                  <OrderItemsTable orderItems={refund.orderItems} />
-                </td>
-              </tr>
-            ))}
-        </tbody>
-      </table>
-      {refundId && (
-        <BasicModal close={resetRefundId}>
-          <Stack sx={{ textAlign: "center" }}>
-            {resError && <Alert severity="error">{resError}</Alert>}
-            <Alert severity="error">
-              Are you sure you want to delete this refund request!
-            </Alert>
-            <Grid mt={1} container spacing={4}>
-              <Grid item xs={6}>
-                <Button
-                  size="medium"
-                  variant="contained"
-                  onClick={resetRefundId}>
-                  Close
-                </Button>
+                </Grid>
+                <Grid item xs={6}>
+                  <Button
+                    size="medium"
+                    variant="contained"
+                    color="error"
+                    onClick={handleRemoveRefund}>
+                    Confirm
+                  </Button>
+                </Grid>
               </Grid>
-              <Grid item xs={6}>
-                <Button
-                  size="medium"
-                  variant="contained"
-                  color="error"
-                  onClick={handleRemoveRefund}>
-                  Confirm
-                </Button>
-              </Grid>
-            </Grid>
-          </Stack>
-        </BasicModal>
-      )}
+            </Stack>
+          </BasicModal>
+        )}
+      </FetchingDataWrapper>
     </>
   );
 };

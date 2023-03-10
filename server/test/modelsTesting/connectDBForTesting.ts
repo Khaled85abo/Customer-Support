@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 
 export async function connectDBForTesting() {
   try {
-    const dbUri =
-      "mongodb+srv://AnnaKhaled:TxwAGNr0N3nWlLJP@cluster0.55qre.mongodb.net/customerSupport?retryWrites=true&w=majority";
+    const dbUri = process.env.MONGODB_URL;
     // const dbName = "customerSupport";
+    if (!dbUri) throw new Error("no MONGODB_URL found");
     mongoose.set("strictQuery", true);
     await mongoose.connect(dbUri);
   } catch (error) {

@@ -6,7 +6,9 @@ import {
   ReactNode,
 } from "react";
 import * as axios from "../axios";
+import { ROLES } from "../constants/roles";
 import { RefundStatusType, RefundType } from "../types/refund";
+import { useStateContext } from "./stateContext";
 type OrdersStateType = {
   loading: boolean;
   orders: [];
@@ -49,6 +51,9 @@ export default function ClientContextProvider({
 }: {
   children: ReactNode;
 }) {
+  const {
+    loginState: { role },
+  } = useStateContext();
   const [orders, setOrders] = useState<OrdersStateType>({
     loading: false,
     orders: [],
@@ -113,8 +118,10 @@ export default function ClientContextProvider({
   };
 
   useEffect(() => {
-    getORders();
-    getRefunds();
+    if (role == ROLES.client) {
+      getORders();
+      getRefunds();
+    }
   }, []);
 
   const values = {
