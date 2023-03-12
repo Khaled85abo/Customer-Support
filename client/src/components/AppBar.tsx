@@ -20,7 +20,7 @@ function ResponsiveAppBar() {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" data-testid="app-bar">
       <Container maxWidth="xl">
         <Toolbar
           disableGutters
