@@ -5,14 +5,17 @@ import App from "./App";
 import "./index.css";
 import { BrowserRouter } from "react-router-dom";
 import StateContextProvider from "./context/stateContext";
+import ErrorBoundary from "./errorBoundary/ErrorBoundary";
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <Suspense fallback={<div>LOADING...</div>}>
-      <StateContextProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </StateContextProvider>
-    </Suspense>
+    <ErrorBoundary>
+      <Suspense fallback={<div>LOADING...</div>}>
+        <StateContextProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </StateContextProvider>
+      </Suspense>
+    </ErrorBoundary>
   </React.StrictMode>
 );

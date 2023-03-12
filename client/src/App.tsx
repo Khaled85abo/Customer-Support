@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Routes,
   Route,
@@ -7,9 +8,9 @@ import {
   NavLink,
 } from "react-router-dom";
 import Login from "./views/Login";
-import ClientDashboard from "./views/ClientDashboard";
-import AdminDashboard from "./views/AdminDashboard";
-import AgentDashboard from "./views/AgentDashboard";
+const ClientDashboard = React.lazy(() => import("./views/ClientDashboard"));
+const AgentDashboard = React.lazy(() => import("./views/AgentDashboard"));
+const AdminDashboard = React.lazy(() => import("./views/AdminDashboard"));
 import { useEffect } from "react";
 import { useStateContext } from "./context/stateContext";
 import ResponsiveAppBar from "./components/AppBar";
