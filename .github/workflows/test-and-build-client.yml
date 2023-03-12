@@ -15,16 +15,31 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [14.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
-      - run: npm ci
-      - run: npm run build --if-present
-      - run: npm test
+      - name: Install dependencies
+        #Using npm ci is generally faster than running npm install
+        run: |
+          cd client
+          npm ci
+      - name: build the app
+        run: |
+          cd client
+          npm run build
+      - name: Run component tests
+        run: |
+          cd client
+          npm run test
+      - name: Start the app
+        run: |
+          cd client
+          npm start &
+          npx wait-on --timeout 60000
